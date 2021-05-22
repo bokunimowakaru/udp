@@ -145,8 +145,14 @@ def save(filename, data):
     fp.close()                                          # ファイルを閉じる
 
 def barChartHtml(colmun, range, val, color='lightgreen'):    # 棒グラフHTMLを作成する関数
-    html = '<td>' + colmun[0] + '(' + colmun[1] + ')</td>\n' # 棒グラフ名を表示
-    html += '<td align="right">'+str(val)+'</td>\n' # 変数valの値を表示
+    html = '<td>' + colmun[0] + '</td>\n' # 棒グラフ名を表示
+    unit = ''
+    if len(colmun[1]) > 0:
+        if colmun[1] == 'deg C':
+            unit = ' ℃'
+        else:
+            unit = ' ' + colmun[1]
+    html += '<td align="right">' + str(val) + unit + '</td>\n' # 変数valの値を表示
     min = range[0]
     max = range[1]
     i= round(200 * (val - min) / (max - min))       # 棒グラフの長さを計算
@@ -157,8 +163,10 @@ def barChartHtml(colmun, range, val, color='lightgreen'):    # 棒グラフHTML�
     if val > max or val < min:                      # 最大値or最小値を超えた時
         color = 'red'                               # 棒グラフの色を赤に
         i = 200                                     # グラフ長を200ポイントに
-    html += '<td><div style="background-color: ' + color
+    html += '<td align ="right" valign="bottom"><div style="font-size:xx-small;">' + str(min) + '</div></td>\n'
+    html += '<td width=200><div style="background-color: ' + color
     html += '; width: ' + str(i) + 'px">&nbsp;</div></td>\n'
+    html += '<td valign="bottom"><div style="font-size:xx-small;">' + str(max) + '</div></td>\n'
     return html                                     # HTMLデータを返却
 
 def wsgi_app(environ, start_response):              # HTTPアクセス受信時の処理
@@ -171,8 +179,8 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
     html += '</head>\n<body>\n'                     # 以下は本文
     html += '<table border=1>\n'                    # 作表を開始
     html += '<tr><th>デバイス名</th><th>項目</th><th width=50>値</th>' # 「項目」「値」を表示
-    html += '<th width=200>グラフ</th>\n'           # 「グラフ」を表示
-    for dev in devices:
+    html += '<th colspan = 3>グラフ</th>\n'           # 「グラフ」を表示
+    for dev in sorted(devices):
         if dev[0:5] in sensors:
             colmuns = csvs.get(dev[0:5])
             if colmuns is None:
@@ -257,6 +265,7 @@ while thread.is_alive and sock:                     # 永久ループ(httpd,udp�
     if dev not in devices:
         print('NEW Device,',dev)
         devices.append(dev)
+        # print(sorted(devices))
         if not os.path.exists(filename):
             fp = open(filename, mode='w')               # 書込用ファイルを開く
             fp.write('YYYY/MM/dd hh:mm, IP Address')    # CSV様式
