@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # オーバレイモードのドライブの存在を確認し、プロンプトを変更します。
+#
+#                                              Copyright (c) 2021 Wataru KUNINO
 
 # インストール方法
 #   git clone https://bokunimo.net/git/udp.git

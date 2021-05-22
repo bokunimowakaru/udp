@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Picturesフォルダ内の写真をスライドショー表示します
+#
+#                                              Copyright (c) 2021 Wataru KUNINO
 
 # インストール方法
 #   sudo apt-get install feh
