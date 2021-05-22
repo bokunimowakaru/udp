@@ -3,12 +3,14 @@
 
 ################################################################################
 # UDPで受信したIoTセンサ機器の値を棒グラフで表示します。
+# （Webブラウザで http://127.0.0.1:8080 にアクセスするとグラフ表示されます）
 #
 #                                               Copyright (c) 2021 Wataru KUNINO
 ################################################################################
 
 # 初期設定
 UDP_PORT = 1024             # UDP待ち受けポート番号(デフォルトは1024)
+HTTP_PORT = 80              # HTTP待ち受けポート番号(デフォルトは80->失敗時8080)
 DEV_CHECK = False           # 未登録デバイス保存(True:破棄,False:UNKNOWNで保存)
 
 # センサ機器用登録デバイス（UDPペイロードの先頭5文字）
@@ -150,6 +152,10 @@ def barChartHtml(colmun, range, val, color='lightgreen'):    # 棒グラフHTML�
     if len(colmun[1]) > 0:
         if colmun[1] == 'deg C':
             unit = ' ℃'
+        elif colmun[1] == 'uSievert':
+            unit = ' μSv'
+        elif colmun[1] == 'm/s2':
+            unit = ' m/s²'
         else:
             unit = ' ' + colmun[1]
     html += '<td align="right">' + str(val) + unit + '</td>\n' # 変数valの値を表示
@@ -203,9 +209,15 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
     start_response('200 OK', [('Content-type', 'text/html; charset=utf-8')])
     return [html.encode('utf-8')]                   # 応答メッセージを返却
 
-def httpd(port = 80):
-    htserv = make_server('', port, wsgi_app)        # HTTPサーバ実体化
-    print('HTTP port', port)                        # ポート番号を表示
+def httpd(port = HTTP_PORT):
+    try:
+        htserv = make_server('', port, wsgi_app)    # TCPポート80でHTTPサーバ実体化
+    except PermissionError:                         # 例外処理発生時(アクセス拒否)
+        port += 8000
+        if port > 65535:
+            port = 8080
+        htserv = make_server('', port, wsgi_app)    # ポート8080でHTTPサーバ実体化
+    print('HTTP port', port)
     htserv.serve_forever()                          # HTTPサーバを起動
 
 buf_n= 128                                          # 受信バッファ容量(バイト)
