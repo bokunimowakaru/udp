@@ -2,7 +2,9 @@
 # UDPを監視する 指定した時間内にデータが得られなければメールを送信する
 # Copyright (c) 2018 Wataru KUNINO
 
-MAILTO="xbee@dream.jp"                              # メール送信先
+# mutt のインストールが必要です
+
+MAILTO="ここにメールアドレスを記入"                 # メール送信先
 PORT=1024                                           # 受信UDPポート番号を1024に
 DEVS=(
     "humid_1 90"
