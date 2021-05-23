@@ -24,3 +24,8 @@ else
 	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[01;31m\](LOCKED)\[\033[00m\]:\[\033[01;34m\]\w \$\[\033[00m\] '
 	echo "Overlay Mode = Locked"
 fi
+
+# その他 設定をコマンドで行う方法
+# sudo raspi-config nonint enable_overlayfs
+# sudo raspi-config nonint disable_overlayfs
+# sudo raspi-config nonint get_overlay_now
