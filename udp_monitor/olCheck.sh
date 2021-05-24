@@ -15,17 +15,56 @@
 #         . ~/udp/udp_monitor/olCheck.sh
 #     fi
 
-echo "Usage: source" $0 
+echo "Usage: source" $0 "[on|off|status]"
+
+echo -n "Overlay Mode = "
 i=`df|grep "^overlay"| tail -1`
 if [ "$i" = "" ]; then
-	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w \$\[\033[00m\] '
-	echo "Overlay Mode = unlocked"
+	echo -n "unlocked"
+	olfs=0
 else
-	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[01;31m\](LOCKED)\[\033[00m\]:\[\033[01;34m\]\w \$\[\033[00m\] '
-	echo "Overlay Mode = Locked"
+	echo -n "Locked"
+	olfs=1
 fi
 
-# その他 設定をコマンドで行う方法
+if [ "${1:0:4}" = "stat" ]; then
+	sudo raspi-config nonint get_overlay_now
+	if [ $? -ne 0 ]; then
+		echo -n ", unlocked"
+		olfs=0
+	else
+		echo -n ", Locked"
+		olfs=1
+	fi
+fi
+
+if [ ${olfs} -eq 0 ]; then
+	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w \$\[\033[00m\] '
+else
+	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[01;31m\](LOCKED)\[\033[00m\]:\[\033[01;34m\]\w \$\[\033[00m\] '
+fi
+
+olfs_new=${olfs}
+if [ "${1}" = "off" ]; then
+	echo
+	sudo raspi-config nonint disable_overlayfs
+	echo -n "Overlay Mode = unlock"
+	olfs_new=0
+fi
+if [ "${1}" = "on" ]; then
+	echo
+	sudo raspi-config nonint enable_overlayfs
+	echo -n "Overlay Mode = Lock"
+	olfs_new=1
+fi
+
+if [ ${olfs} -ne ${olfs_new} ]; then
+	echo -n "; System Reboot Required!"
+fi
+
+echo
+
+# 設定をコマンドで行う方法
 # sudo raspi-config nonint enable_overlayfs
 # sudo raspi-config nonint disable_overlayfs
 # sudo raspi-config nonint get_overlay_now
