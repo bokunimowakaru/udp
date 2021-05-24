@@ -15,7 +15,12 @@
 #         . ~/udp/udp_monitor/olCheck.sh
 #     fi
 
-echo "Usage: source" $0 "[on|off|status]"
+name="olCheck.sh"
+if [ "$0" != "-bash" ]; then
+	name=${0}
+fi
+
+echo "Usage: source" ${name} "[on|off|status]"
 
 echo -n "Overlay Mode = "
 i=`df|grep "^overlay"| tail -1`
