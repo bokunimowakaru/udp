@@ -59,7 +59,8 @@ if [ "${1}" = "on" ]; then
 fi
 
 if [ ${olfs} -ne ${olfs_new} ]; then
-	echo -n "; System Reboot Required!"
+	echo "; System Reboot Required!"
+	echo -n "> sudo reboot"
 fi
 
 echo
