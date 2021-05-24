@@ -53,6 +53,7 @@ if [ "${1}" = "off" ]; then
 fi
 if [ "${1}" = "on" ]; then
 	echo
+	echo "Config is in progress. しばらくお待ちください"
 	sudo raspi-config nonint enable_overlayfs
 	echo -n "Overlay Mode = Lock"
 	olfs_new=1
