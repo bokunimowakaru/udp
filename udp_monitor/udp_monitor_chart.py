@@ -188,7 +188,7 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
     html += '<th colspan = 3>グラフ</th>\n'           # 「グラフ」を表示
 
     queries  = environ.get('QUERY_STRING').lower().split('&')
-    print('debug queries:',queries) ##確認用
+    # print('debug queries:',queries) ##確認用
 
     sort_col = 'devices'
     filter_dev = list()
@@ -238,10 +238,10 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
                         if colmun not in col_dict:
                             col_dict[colmun] = list()
                         col_dict[colmun].append(dev)
-    print('debug col_dict:',col_dict) ##確認用
+    # print('debug col_dict:',col_dict) ##確認用
     if len(col_dict) > 0:
         for colmun in sorted(col_dict):
-            print('debug colmun:',colmun) ##確認用
+            # print('debug colmun:',colmun) ##確認用
             j = 0
             for dev in col_dict[colmun]:
                 minmax = csvs_range.get(colmun)
