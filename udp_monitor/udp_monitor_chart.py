@@ -11,6 +11,7 @@
 # 初期設定
 UDP_PORT = 1024             # UDP待ち受けポート番号(デフォルトは1024)
 HTTP_PORT = 80              # HTTP待ち受けポート番号(デフォルトは80->失敗時8080)
+SAVE_CSV = True             # CSVファイルの保存(True:保存,False:保存しない)
 DEV_CHECK = False           # 未登録デバイス保存(True:破棄,False:UNKNOWNで保存)
 
 # センサ機器用登録デバイス（UDPペイロードの先頭5文字）
@@ -139,6 +140,8 @@ def get_val(s):                                         # データを数値に�
         return val                                      # 小数値を応答
 
 def save(filename, data):
+    if SAVE_CSV == False:
+        return
     try:
         fp = open(filename, mode='a')                   # 書込用ファイルを開く
     except Exception as e:                              # 例外処理発生時
@@ -347,8 +350,11 @@ while thread.is_alive and sock:                     # 永久ループ(httpd,udp�
             fp.write('\n')
             fp.close()                                  # ファイルを閉じる
     print(date + ', ' + dev + ', ' + udp_from[0], end = '')  # 日付,送信元を表示
-    print(s, '-> ' + filename, flush=True)              # 受信データを表示
-    save(filename, date + ', ' + udp_from[0] + s)       # ファイルに保存
+    if SAVE_CSV:
+        print(s, '-> ' + filename, flush=True)          # 受信データを表示
+        save(filename, date + ', ' + udp_from[0] + s)   # ファイルに保存
+    else:
+        print(s, flush=True)                            # 受信データを表示
 
     # 数値データの変数保持(HTML表示用)
     if dev[0:5] in sensors:                             # センサ(数値データ)のとき
