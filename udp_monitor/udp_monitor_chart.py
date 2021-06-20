@@ -105,6 +105,7 @@ pingpongs = [
 
 devices = list()
 dev_vals = dict()
+http_port = HTTP_PORT
 
 import os
 import sys
@@ -186,9 +187,12 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
     html = '<html>\n<head>\n'                       # HTMLコンテンツを作成
     html += '<meta http-equiv="refresh" content="10;">\n'   # 自動再読み込み
     html += '</head>\n<body>\n'                     # 以下は本文
+    html += '<h1>UDPセンサ用モニタ ('\
+          + str(len(devices)) + ' devices)</h1>\n'
     html += '<table border=1>\n'                    # 作表を開始
-    html += '<tr><th><a href="?devices">デバイス名</a></th><th><a href="?items">項目</a></th><th width=50>値</th>'
-    html += '<th colspan = 3>グラフ</th>\n'           # 「グラフ」を表示
+    html += '<tr><th><a href="?devices">デバイス名</a></th>'
+    html += '<th><a href="?items">項目</a></th><th width=50>値</th>'
+    html += '<th colspan = 3>グラフ</th></tr>\n'    # 「グラフ」を表示
 
     queries  = environ.get('QUERY_STRING').lower().split('&')
     # print('debug queries:',queries) ##確認用
@@ -264,7 +268,14 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
                 html += barChartHtml(colmun[1], minmax, val)   # 棒グラフ化
                 j += 1
 
-    html += '</tr>\n</table>\n</body>\n</html>\n'   # 作表とhtmlの終了
+    html += '<tr><td colspan=6 align=right>'
+    html += '<div><font size=2>Usage: http://127.0.0.1'
+    if http_port != 80:
+        html += ':' + str(http_port)
+    html += '/?{devices|items}[&device=name][&item=name]</font></div>\n'
+    html += '<div>Copyright (c) 2021 <a href="https://bokunimo.net">Wataru KUNINO</a></div>\n'
+    html += '</tr>\n</table>\n'                     # 表の終了
+    html += '</body>\n</html>\n'                    # htmlの終了
     start_response('200 OK', [('Content-type', 'text/html; charset=utf-8')])
     return [html.encode('utf-8')]                   # 応答メッセージを返却
 
@@ -276,7 +287,9 @@ def httpd(port = HTTP_PORT):
         if port > 65535:
             port = 8080
         htserv = make_server('', port, wsgi_app)    # ポート8080でHTTPサーバ実体化
-    print('HTTP port', port)
+    global http_port
+    http_port = port
+    print('HTTP port', http_port)
     htserv.serve_forever()                          # HTTPサーバを起動
 
 buf_n= 128                                          # 受信バッファ容量(バイト)
