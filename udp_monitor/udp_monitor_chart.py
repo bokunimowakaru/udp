@@ -187,14 +187,26 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
     html += '<tr><th><a href="?devices">デバイス名</a></th><th><a href="?items">項目</a></th><th width=50>値</th>'
     html += '<th colspan = 3>グラフ</th>\n'           # 「グラフ」を表示
 
-    query  = environ.get('QUERY_STRING')
+    queries  = environ.get('QUERY_STRING').lower().split('&')
+    print('debug queries:',queries) ##確認用
+
     sort_col = 'devices'
-    if query.lower() == '' or query.lower() == 'devices':
-        sort_col = 'devices'
-    if query.lower() == 'items':
-        sort_col = 'items'
+    filter_dev = list()
+    filter_item = list()
+    for query in queries:
+        if query == '' or query == 'devices':
+            sort_col = 'devices'
+        if query == 'items':
+            sort_col = 'items'
+        if query.startswith('device='):
+            filter_dev.append(query[7:12])
+        if query.startswith('item='):
+            filter_item.append(query[5:])
+
     col_dict = dict()
     for dev in sorted(devices):
+        if len(filter_dev) > 0 and dev[0:5] not in filter_dev:
+            continue
         if dev[0:5] in sensors:
             colmuns = csvs.get(dev[0:5])
             if colmuns is None:
@@ -206,20 +218,26 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
             for i in range(i_max):
                 colmun = csvs[dev[0:5]][i]
                 minmax = csvs_range.get(colmun)
-                val = dev_vals[dev][i]
                 if minmax is None:
-                    continue
+                    minmax = (0.0, 1.0)
+                val = dev_vals[dev][i]
+                if val is None:
+                    val = 0
                 if sort_col == 'devices':
                     if i == 0:
-                        html += '<tr><th rowspan = ' + str(i_max) + '>' + dev + '</th>'
+                        html += '<tr><td rowspan = ' + str(i_max) + '>'\
+                              + '<a href="?device=' + dev[0:5] + '">'\
+                              + dev[0:5] + '</a> ' + dev[6] + '</td>'
                     else:
                         html += '<tr>'
-                    html += '<td>' + colmun[0] + '</td>\n'      # 棒グラフ名を表示
+                    html += '<td><a href="?items&item=' + colmun[0] + '">'\
+                          + colmun[0] + '</a></td>\n'
                     html += barChartHtml(colmun[1], minmax, val)   # 棒グラフ化
                 elif sort_col == 'items':
-                    if colmun not in col_dict:
-                        col_dict[colmun] = list()
-                    col_dict[colmun].append(dev)
+                    if len(filter_item) == 0 or colmun[0].lower() in filter_item:
+                        if colmun not in col_dict:
+                            col_dict[colmun] = list()
+                        col_dict[colmun].append(dev)
     print('debug col_dict:',col_dict) ##確認用
     if len(col_dict) > 0:
         for colmun in sorted(col_dict):
@@ -228,12 +246,18 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
             for dev in col_dict[colmun]:
                 minmax = csvs_range.get(colmun)
                 if minmax is None:
-                    continue
+                    minmax = (0.0, 1.0)
                 i = csvs[dev[0:5]].index(colmun)
                 val = dev_vals[dev][i]
-                html += '<tr><th>' + dev + '</th>'
+                if val is None:
+                    val = 0
+                html += '<tr><td><a href="?device=' + dev[0:5] + '">'\
+                      + dev[0:5] + '</a> ' + dev[6] + '</td>'
                 if j == 0:
-                    html += '<td rowspan = ' + str(len(col_dict[colmun])) + '>' + colmun[0] + '</td>\n'
+                    html += '<td rowspan = ' + str(len(col_dict[colmun])) + '>'\
+                         + '<a href="?items&item=' + colmun[0] + '">'\
+                         + colmun[0] + '</a></td>\n'
+                # print('debug barChartHtml:', minmax, val) ##確認用
                 html += barChartHtml(colmun[1], minmax, val)   # 棒グラフ化
                 j += 1
 
