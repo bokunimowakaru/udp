@@ -211,7 +211,7 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
             colmuns = csvs.get(dev[0:5])
             if colmuns is None:
                 print('[ERROR] founds no devices on csvs dictionary; dev =',dev[0:5])
-                break
+                continue
             i_max = min(len(colmuns), len(dev_vals[dev]))
             if dev[0:5] == 'actap':  # 数が多いので電力のみを表示する
                 i_max = 1
