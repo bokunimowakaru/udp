@@ -63,7 +63,7 @@ csvs_range = {\
     ('Temperature','deg C'):    (0,40),\
     ('RSSI','dBm'):             (-100,0),\
     ('Humidity','%'):           (0,100),\
-    ('Pressure','hPa'):         (1013.25 - 20, 1013.25 + 20),\
+    ('Pressure','hPa'):         (1013.25 - 33.25, 1013.25 + 33.25),\
     ('CO','ppm'):               (0,2000),\
     ('CO2','ppm'):              (0,2000),\
     ('CH4','ppm'):              (0,2000),\
@@ -120,7 +120,7 @@ def get_dev_name(s):                                    # デバイス名を取�
         return s.strip()
     if not s[0:8].isprintable():
         return None                                     # Noneを応答
-    if s[5] == '_' and s[7] == ',':                     # 形式が一致する時
+    if s[5] == '_' and s[6].isdecimal() and s[7] == ',': # 形式が一致する時
         if s[0:5] in sensors:                           # センサリストの照合
             return s[0:7]                               # デバイス名を応答
         if s[0:5] in notifyers:                         # センサリストの照合
@@ -147,18 +147,17 @@ def save(filename, data):
     fp.close()                                          # ファイルを閉じる
 
 def barChartHtml(colmun, range, val, color='lightgreen'):    # 棒グラフHTMLを作成する関数
-    html = '<td>' + colmun[0] + '</td>\n' # 棒グラフ名を表示
     unit = ''
-    if len(colmun[1]) > 0:
-        if colmun[1] == 'deg C':
+    if len(colmun) > 0:
+        if colmun == 'deg C':
             unit = ' ℃'
-        elif colmun[1] == 'uSievert':
+        elif colmun == 'uSievert':
             unit = ' μSv'
-        elif colmun[1] == 'm/s2':
+        elif colmun == 'm/s2':
             unit = ' m/s²'
         else:
-            unit = ' ' + colmun[1]
-    html += '<td align="right">' + str(val) + unit + '</td>\n' # 変数valの値を表示
+            unit = ' ' + colmun
+    html = '<td align="right">' + str(val) + unit + '</td>\n' # 変数valの値を表示
     min = range[0]
     max = range[1]
     i= round(200 * (val - min) / (max - min))       # 棒グラフの長さを計算
@@ -180,12 +179,21 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
     if path != '/':                                 # パスがルート以外のとき
         start_response('404 Not Found',[])          # 404エラー設定
         return ['404 Not Found'.encode()]           # 応答メッセージ(404)を返却
+
     html = '<html>\n<head>\n'                       # HTMLコンテンツを作成
     html += '<meta http-equiv="refresh" content="10;">\n'   # 自動再読み込み
     html += '</head>\n<body>\n'                     # 以下は本文
     html += '<table border=1>\n'                    # 作表を開始
-    html += '<tr><th>デバイス名</th><th>項目</th><th width=50>値</th>' # 「項目」「値」を表示
+    html += '<tr><th><a href="?devices">デバイス名</a></th><th><a href="?items">項目</a></th><th width=50>値</th>'
     html += '<th colspan = 3>グラフ</th>\n'           # 「グラフ」を表示
+
+    query  = environ.get('QUERY_STRING')
+    sort_col = 'devices'
+    if query.lower() == '' or query.lower() == 'devices':
+        sort_col = 'devices'
+    if query.lower() == 'items':
+        sort_col = 'items'
+    col_dict = dict()
     for dev in sorted(devices):
         if dev[0:5] in sensors:
             colmuns = csvs.get(dev[0:5])
@@ -193,18 +201,40 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
                 print('[ERROR] founds no devices on csvs dictionary; dev =',dev[0:5])
                 break
             i_max = min(len(colmuns), len(dev_vals[dev]))
-            if dev[0:5] == 'actap':  # (筆者開発環境用の例外) 数が多いので電力のみを表示する
+            if dev[0:5] == 'actap':  # 数が多いので電力のみを表示する
                 i_max = 1
             for i in range(i_max):
                 colmun = csvs[dev[0:5]][i]
                 minmax = csvs_range.get(colmun)
                 val = dev_vals[dev][i]
-                if range is not None:
+                if minmax is None:
+                    continue
+                if sort_col == 'devices':
                     if i == 0:
                         html += '<tr><th rowspan = ' + str(i_max) + '>' + dev + '</th>'
                     else:
                         html += '<tr>'
-                    html += barChartHtml(colmun, minmax, val)   # 棒グラフ化
+                    html += '<td>' + colmun[0] + '</td>\n'      # 棒グラフ名を表示
+                    html += barChartHtml(colmun[1], minmax, val)   # 棒グラフ化
+                elif sort_col == 'items':
+                    if colmun not in col_dict:
+                        col_dict[colmun] = list()
+                    col_dict[colmun].append(dev)
+    print('debug col_dict:',col_dict) ##確認用
+    if len(col_dict) > 0:
+        for colmun in sorted(col_dict):
+            print('debug colmun:',colmun) ##確認用
+            j = 0
+            for dev in col_dict[colmun]:
+                html += '<tr><th>' + dev + '</th>'
+                if j == 0:
+                    html += '<td rowspan = ' + str(len(col_dict[colmun])) + '>' + colmun[0] + '</td>\n'
+                minmax = csvs_range.get(colmun)
+                i = csvs[dev[0:5]].index(colmun)
+                val = dev_vals[dev][i]
+                html += barChartHtml(colmun[1], minmax, val)   # 棒グラフ化
+                j += 1
+
     html += '</tr>\n</table>\n</body>\n</html>\n'   # 作表とhtmlの終了
     start_response('200 OK', [('Content-type', 'text/html; charset=utf-8')])
     return [html.encode('utf-8')]                   # 応答メッセージを返却
