@@ -226,12 +226,14 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
             print('debug colmun:',colmun) ##確認用
             j = 0
             for dev in col_dict[colmun]:
+                minmax = csvs_range.get(colmun)
+                if minmax is None:
+                    continue
+                i = csvs[dev[0:5]].index(colmun)
+                val = dev_vals[dev][i]
                 html += '<tr><th>' + dev + '</th>'
                 if j == 0:
                     html += '<td rowspan = ' + str(len(col_dict[colmun])) + '>' + colmun[0] + '</td>\n'
-                minmax = csvs_range.get(colmun)
-                i = csvs[dev[0:5]].index(colmun)
-                val = dev_vals[dev][i]
                 html += barChartHtml(colmun[1], minmax, val)   # 棒グラフ化
                 j += 1
 
