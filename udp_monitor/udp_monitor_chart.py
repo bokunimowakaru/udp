@@ -13,6 +13,7 @@ UDP_PORT = 1024             # UDP待ち受けポート番号(デフォルトは1
 HTTP_PORT = 80              # HTTP待ち受けポート番号(デフォルトは80->失敗時8080)
 SAVE_CSV = True             # CSVファイルの保存(True:保存,False:保存しない)
 DEV_CHECK = False           # 未登録デバイス保存(True:破棄,False:UNKNOWNで保存)
+ELEVATION = 0               # 標高(m) 気圧値の補正用
 
 # センサ機器用登録デバイス（UDPペイロードの先頭5文字）
 sensors = [\
@@ -139,6 +140,14 @@ def get_val(s):                                         # データを数値に�
         return int(val)                                 # 整数値を応答
     else:
         return val                                      # 小数値を応答
+
+def calc_press_h0(temp,press):
+    print('calc_press_h0',temp,press,end=' -> ')
+    temp += 273.15 + 0.0065 * ELEVATION                 # 海面(標高)温度
+    press /= (1.0 - 0.0065 * ELEVATION / temp) ** 5.257 # 海面(標高)気圧
+    press = round(press,1)
+    print(press)
+    return press
 
 def save(filename, data):
     if SAVE_CSV == False:
@@ -350,7 +359,7 @@ while thread.is_alive and sock:                     # 永久ループ(httpd,udp�
         print('NEW Device,',dev)
         devices.append(dev)
         # print(sorted(devices))
-        if not os.path.exists(filename):
+        if SAVE_CSV and not os.path.exists(filename):
             fp = open(filename, mode='w')               # 書込用ファイルを開く
             fp.write('YYYY/MM/dd hh:mm, IP Address')    # CSV様式
             column = csvs.get(dev[0:5])
@@ -373,6 +382,10 @@ while thread.is_alive and sock:                     # 永久ループ(httpd,udp�
     if dev[0:5] in sensors:                             # センサ(数値データ)のとき
             # (len(vals)>0だと値なし時に辞書追加されないのでsensorsかどうかで判定)
         dev_vals[dev] = list()                          # 数値データを保持
+        if dev[0:5] == 'press':
+            vals[1] = str(calc_press_h0(get_val(vals[0]),get_val(vals[1])))
+        if dev[0:5] == 'envir' or dev[0:5] == 'e_co2':
+            vals[2] = str(calc_press_h0(get_val(vals[0]),get_val(vals[2])))
         for val in vals:
             dev_vals[dev].append(get_val(val))          # 数値に変換して追加
             # Noneは除去しない。Noneも代入
