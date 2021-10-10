@@ -16,7 +16,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)     # ソケットを作
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST,1)   # ブロードキャスト
 
 tempSensor = TempSensor()                                   # 温度センサの実体化
-tempSensor.offset = 30                                      # 補正値15を設定
+tempSensor.offset = 30                                      # 補正値30を設定
 
 while True:                                                 # 繰り返し構文
     temp = round(tempSensor.get(), 1)                       # 温度値を取得
