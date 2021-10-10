@@ -9,18 +9,18 @@
 
 import socket                                               # ソケットの組み込み
 from time import sleep                                      # スリープの組み込み
-from lib_humiSensorSHT import HumiSensor                    # 温度センサ組み込み
+from lib_humiSensorSHT import HumiSensor                    # センサ組み込み
 
 port = 1024                                                 # ポート番号を代入
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)     # ソケットを作成
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST,1)   # ブロードキャスト
 
-humiSensor = HumiSensor()                                   # 温度センサの実体化
+humiSensor = HumiSensor()                                   # センサの実体化
 
 while True:                                                 # 繰り返し構文
-    (temp, humi) = humiSensor.get()                         # 温度値を取得
+    (temp, humi) = humiSensor.get()                         # 温度と湿度値を取得
     udp = 'humid_1,' + str(round(temp, 1)) + ', '           # 送信文字列を生成
-    udp += str(round(humi, 2)) + '\n'                       # 
+    udp += str(round(humi, 2)) + '\n'                       # 湿度値を追加
     sock.sendto(udp.encode(),('255.255.255.255',port))      # UDP送信
     print('send :', udp, end='')                            # 送信データを出力
     sleep(10)                                               # 10秒の待ち時間処理
