@@ -41,13 +41,13 @@ while True:                                                 # 繰り返し構文
     output_str = date + ', ' + dev + ', ' + csv             # 日付とデータを結合
     print(output_str)                                       # 結合データを表示
     save('log_all.csv', output_str)                         # 単一ファイルに保存
-    save('log_' + dev + '.csv', output_str)                 # 機器毎に保存
+    save('log_' + dev + '.csv', date + ', ' + csv)          # 機器毎に保存
 sock.close()                                                # 切断(実行されない)
 
 '''
 Listening UDP port 1024 ...
-2021/10/16 13:16, temp._3, 24.5
-2021/10/16 13:16, temp._3, 25.0
-2021/10/16 13:17, temp._3, 24.5
-2021/10/16 13:17, temp._3, 25.5
+2021/10/16 13:16, temp._1, 24.5
+2021/10/16 13:16, temp._1, 25.0
+2021/10/16 13:17, temp._1, 24.5
+2021/10/16 13:17, temp._1, 25.5
 '''
