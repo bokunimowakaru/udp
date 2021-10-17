@@ -60,7 +60,6 @@ while True:                                                 # 繰り返し構文
     date = date.strftime('%Y/%m/%d %H:%M')                  # 日付を文字列に変更
     output_str = date + ', ' + dev + ', ' + csv             # 日付とデータを結合
     print(output_str)                                       # 結合データを表示
-    print(output_str)                                       # 日付とデータを出力
     output_dict[dev] = output_str                           # データの更新
 
 '''
