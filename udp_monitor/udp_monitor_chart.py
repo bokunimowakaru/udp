@@ -14,6 +14,7 @@ HTTP_PORT = 80              # HTTP待ち受けポート番号(デフォルトは
 SAVE_CSV = True             # CSVファイルの保存(True:保存,False:保存しない)
 DEV_CHECK = False           # 未登録デバイス保存(True:破棄,False:UNKNOWNで保存)
 ELEVATION = 0               # 標高(m) 気圧値の補正用
+HIST_BUF_N = 10             # 1センサ値あたりの履歴保持数
 
 # センサ機器用登録デバイス（UDPペイロードの先頭5文字）
 sensors = [\
@@ -106,6 +107,7 @@ pingpongs = [
 
 devices = list()
 dev_vals = dict()
+dev_date = dict()
 http_port = HTTP_PORT
 
 import os
@@ -198,10 +200,6 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
     html += '</head>\n<body>\n'                     # 以下は本文
     html += '<h1>UDPセンサ用モニタ ('\
           + str(len(devices)) + ' devices)</h1>\n'
-    html += '<table border=1>\n'                    # 作表を開始
-    html += '<tr><th><a href="?devices">デバイス名</a></th>'
-    html += '<th><a href="?items">項目</a></th><th width=50>値</th>'
-    html += '<th colspan = 3>グラフ</th></tr>\n'    # 「グラフ」を表示
 
     queries  = environ.get('QUERY_STRING').lower().split('&')
     # print('debug queries:',queries) ##確認用
@@ -209,6 +207,7 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
     sort_col = 'devices'
     filter_dev = list()
     filter_item = list()
+    hist = 0
     for query in queries:
         if query == '' or query == 'devices':
             sort_col = 'devices'
@@ -218,17 +217,36 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
             filter_dev.append(query[7:12])
         if query.startswith('item='):
             filter_item.append(query[5:])
+        if query.startswith('hist='):
+            filter_dev.append(query[5:12])
+            hist = 1
 
+    html += "Filter :"
+    if len(filter_dev) > 0:
+        html += ' device = ' + str(filter_dev)
+    if len(filter_item) > 0:
+        html += ' item = ' + str(filter_item)
+    if len(filter_dev) == 0 and len(filter_item) == 0:
+        html += ' None'
+    html += ", Order : " + sort_col + '<br>\n'
+
+    html += '<table border=1>\n'                    # 作表を開始
+    html += '<tr><th><a href="?devices">デバイス名</a></th>'
+    html += '<th><a href="?items">項目</a></th><th>日 時:分</th><th>値</th>'
+    html += '<th colspan = 3>グラフ</th></tr>\n'    # 「グラフ」を表示
     col_dict = dict()
     for dev in sorted(devices):
-        if len(filter_dev) > 0 and dev[0:5] not in filter_dev:
+        if (len(filter_dev) > 0) and (dev[0:5] not in filter_dev) and (dev[0:7] not in filter_dev):
             continue
         if dev[0:5] in sensors:
             colmuns = csvs.get(dev[0:5])
             if colmuns is None:
                 print('[ERROR] founds no devices on csvs dictionary; dev =',dev[0:5])
                 continue
-            i_max = min(len(colmuns), len(dev_vals[dev]))
+            # i_max = min(len(colmuns), len(dev_vals[dev][-1]))
+            i_max = len(colmuns)
+            for j in range(len(dev_vals[dev])):
+                i_max = min(i_max, len(dev_vals[dev][j]))
             if dev[0:5] == 'actap':  # 数が多いので電力のみを表示する
                 i_max = 1
             for i in range(i_max):
@@ -236,19 +254,39 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
                 minmax = csvs_range.get(colmun)
                 if minmax is None:
                     minmax = (0.0, 1.0)
-                val = dev_vals[dev][i]
+                val = dev_vals[dev][-1][i]
                 if val is None:
                     val = 0
                 if sort_col == 'devices':
+                    i_max_hist = i_max
+                    if hist > 0:
+                        hist = len(dev_vals[dev])
+                        i_max_hist *= hist
                     if i == 0:
-                        html += '<tr><td rowspan = ' + str(i_max) + '>'\
+                        html += '<tr><td rowspan = ' + str(i_max_hist) + '>'\
                               + '<a href="?device=' + dev[0:5] + '">'\
-                              + dev[0:5] + '</a> ' + dev[6] + '</td>'
+                              + dev[0:5] + '</a> <a href="?hist=' + dev[0:7] + '">' + dev[6] + '</td>'
                     else:
                         html += '<tr>'
-                    html += '<td><a href="?items&item=' + colmun[0] + '">'\
-                          + colmun[0] + '</a></td>\n'
-                    html += barChartHtml(colmun[1], minmax, val)   # 棒グラフ化
+
+                    if hist > 0:
+                        html += '<td rowspan = ' + str(hist) + '><a href="?items&item=' + colmun[0] + '">'\
+                              + colmun[0] + '</a></td>\n'
+                        for j in range(hist):
+                            if j > 0:
+                                html += '<tr>'
+                            val = dev_vals[dev][j][i]
+                            if val is None:
+                                val = 0
+                            html += '<td>' + dev_date[dev][j].strftime('%d %H:%M') + '</td>'
+                            html += barChartHtml(colmun[1], minmax, val)   # 棒グラフ化
+                            html += '</tr>\n'
+                    else:
+                        html += '<td><a href="?items&item=' + colmun[0] + '">'\
+                              + colmun[0] + '</a></td>\n'
+                        html += '<td>' + dev_date[dev][-1].strftime('%d %H:%M') + '</td>'
+                        html += barChartHtml(colmun[1], minmax, val)   # 棒グラフ化
+
                 elif sort_col == 'items':
                     if len(filter_item) == 0 or colmun[0].lower() in filter_item:
                         if colmun not in col_dict:
@@ -264,16 +302,17 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
                 if minmax is None:
                     minmax = (0.0, 1.0)
                 i = csvs[dev[0:5]].index(colmun)
-                val = dev_vals[dev][i]
+                val = dev_vals[dev][-1][i]
                 if val is None:
                     val = 0
                 html += '<tr><td><a href="?device=' + dev[0:5] + '">'\
-                      + dev[0:5] + '</a> ' + dev[6] + '</td>'
+                      + dev[0:5] + '</a> <a href="?hist=' + dev[0:7] + '">' + dev[6] + '</td>'
                 if j == 0:
                     html += '<td rowspan = ' + str(len(col_dict[colmun])) + '>'\
                          + '<a href="?items&item=' + colmun[0] + '">'\
                          + colmun[0] + '</a></td>\n'
                 # print('debug barChartHtml:', minmax, val) ##確認用
+                html += '<td>' + dev_date[dev][-1].strftime('%d %H:%M') + '</td>'
                 html += barChartHtml(colmun[1], minmax, val)   # 棒グラフ化
                 j += 1
 
@@ -341,7 +380,7 @@ while thread.is_alive and sock:                     # 永久ループ(httpd,udp�
     if len(udp) > 8:
         vals = udp[8:].strip().split(',')               # 「,」で分割
     date = datetime.datetime.today()                    # 日付を取得
-    date = date.strftime('%Y/%m/%d %H:%M')              # 日付を文字列に変更
+    date_s = date.strftime('%Y/%m/%d %H:%M')            # 日付を文字列に変更
     s = ''                                              # 文字列変数
     if dev[0:5] in sensors:
         for val in vals:                                # データ回数の繰り返し
@@ -371,22 +410,31 @@ while thread.is_alive and sock:                     # 永久ループ(httpd,udp�
                         fp.write(', ' + col[0] + '(' + col[1] + ')')
             fp.write('\n')
             fp.close()                                  # ファイルを閉じる
-    print(date + ', ' + dev + ', ' + udp_from[0], end = '')  # 日付,送信元を表示
+    print(date_s + ', ' + dev + ', ' + udp_from[0], end = '')  # 日付,送信元を表示
     if SAVE_CSV:
         print(s, '-> ' + filename, flush=True)          # 受信データを表示
-        save(filename, date + ', ' + udp_from[0] + s)   # ファイルに保存
+        save(filename, date_s + ', ' + udp_from[0] + s)   # ファイルに保存
     else:
         print(s, flush=True)                            # 受信データを表示
 
     # 数値データの変数保持(HTML表示用)
     if dev[0:5] in sensors:                             # センサ(数値データ)のとき
             # (len(vals)>0だと値なし時に辞書追加されないのでsensorsかどうかで判定)
-        dev_vals[dev] = list()                          # 数値データを保持
+        if dev not in dev_vals:
+            dev_vals[dev] = list()                      # 数値データを保持
+            dev_date[dev] = list()                      # 時刻データを保持
         if dev[0:5] == 'press':
             vals[1] = str(calc_press_h0(get_val(vals[0]),get_val(vals[1])))
         if dev[0:5] == 'envir' or dev[0:5] == 'e_co2':
             vals[2] = str(calc_press_h0(get_val(vals[0]),get_val(vals[2])))
+        valn = list()
         for val in vals:
-            dev_vals[dev].append(get_val(val))          # 数値に変換して追加
+            valn.append(get_val(val))                   # 数値に変換して追加
             # Noneは除去しない。Noneも代入
+        dev_vals[dev].append(valn)                      # 配列valnを追加
+        dev_date[dev].append(date)                      # 時刻dateを追加
+        while len(dev_vals[dev]) > HIST_BUF_N:          # 履歴保持数を超過
+            del dev_vals[dev][0]                        # 最も古いデータを削除
+            del dev_date[dev][0]                        # 最も古いデータを削除
+        # print(dev_vals)
 sock.close()                                            # ソケットの切断
