@@ -316,11 +316,11 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
                 html += barChartHtml(colmun[1], minmax, val)   # 棒グラフ化
                 j += 1
 
-    html += '<tr><td colspan=6 align=right>'
+    html += '<tr><td colspan=7 align=right>'
     html += '<div><font size=2>Usage: http://127.0.0.1'
     if http_port != 80:
         html += ':' + str(http_port)
-    html += '/?{devices|items}[&device=name][&item=name]</font></div>\n'
+    html += '/?{devices|items}[&device=name][&item=name][&hist=device_name]</font></div>\n'
     html += '<div>Copyright (c) 2021 <a href="https://bokunimo.net">Wataru KUNINO</a></div>\n'
     html += '</tr>\n</table>\n'                     # 表の終了
     html += '</body>\n</html>\n'                    # htmlの終了
