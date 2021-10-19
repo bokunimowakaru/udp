@@ -16,6 +16,14 @@ DEV_CHECK = False           # 未登録デバイス保存(True:破棄,False:UNKN
 ELEVATION = 0               # 標高(m) 気圧値の補正用
 HIST_BUF_N = 10             # 1センサ値あたりの履歴保持数
 
+# 補正用(表示のみ・保存データは補正されない)
+OFFSET_VALUE = {\
+    'temp._1':(1, 1.0, 0.0),\
+    'temp._2':(1, 1.0, 0.0),\
+    'temp._3':(1, 1.0, 0.0),\
+}#   device   col A    B       col:列番号1～,  corrected = A * value + B
+
+
 # センサ機器用登録デバイス（UDPペイロードの先頭5文字）
 sensors = [\
     'temp0','hall0','adcnv','btn_s','pir_s','illum',\
@@ -447,6 +455,9 @@ while thread.is_alive and sock:                     # 永久ループ(httpd,udp�
             vals[1] = str(calc_press_h0(get_val(vals[0]),get_val(vals[1])))
         if dev[0:5] == 'envir' or dev[0:5] == 'e_co2':
             vals[2] = str(calc_press_h0(get_val(vals[0]),get_val(vals[2])))
+        if dev[0:7] in OFFSET_VALUE:
+            offset = OFFSET_VALUE[dev[0:7]]
+            vals[offset[0]-1] = str(offset[1] * get_val(vals[offset[0]-1]) + offset[2])
         valn = list()
         for val in vals:
             valn.append(get_val(val))                   # 数値に変換して追加
