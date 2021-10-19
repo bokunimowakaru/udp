@@ -23,7 +23,6 @@ OFFSET_VALUE = {\
     'temp._3':(1, 1.0, 0.0),\
 }#   device   col A    B       col:列番号1～,  corrected = A * value + B
 
-
 # センサ機器用登録デバイス（UDPペイロードの先頭5文字）
 sensors = [\
     'temp0','hall0','adcnv','btn_s','pir_s','illum',\
@@ -451,13 +450,16 @@ while thread.is_alive and sock:                     # 永久ループ(httpd,udp�
         if dev not in dev_vals:
             dev_vals[dev] = list()                      # 数値データを保持
             dev_date[dev] = list()                      # 時刻データを保持
-        if dev[0:5] == 'press':
-            vals[1] = str(calc_press_h0(get_val(vals[0]),get_val(vals[1])))
-        if dev[0:5] == 'envir' or dev[0:5] == 'e_co2':
-            vals[2] = str(calc_press_h0(get_val(vals[0]),get_val(vals[2])))
-        if dev[0:7] in OFFSET_VALUE:
-            offset = OFFSET_VALUE[dev[0:7]]
-            vals[offset[0]-1] = str(offset[1] * get_val(vals[offset[0]-1]) + offset[2])
+        try:                                                # 小数変換の例外監視
+            if dev[0:5] == 'press':
+                vals[1] = str(calc_press_h0(get_val(vals[0]),get_val(vals[1])))
+            if dev[0:5] == 'envir' or dev[0:5] == 'e_co2':
+                vals[2] = str(calc_press_h0(get_val(vals[0]),get_val(vals[2])))
+            if dev[0:7] in OFFSET_VALUE:
+                offset = OFFSET_VALUE[dev[0:7]]
+                vals[offset[0]-1] = str(offset[1] * get_val(vals[offset[0]-1]) + offset[2])
+        except IndexError:
+            print('ERROR: list index out of range')
         valn = list()
         for val in vals:
             valn.append(get_val(val))                   # 数値に変換して追加
