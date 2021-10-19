@@ -191,6 +191,15 @@ def barChartHtml(colmun, range, val, color='lightgreen'):    # 棒グラフHTML�
 
 def wsgi_app(environ, start_response):              # HTTPアクセス受信時の処理
     path  = environ.get('PATH_INFO')                # リクエスト先のパスを代入
+    if (path[1:5] == 'log_') and (path[5:10] in sensors) and (path[12:16] == '.csv'):
+        filename = 'log_' + path[5:12] + '.csv'
+        try:
+            fp = open(filename, 'rb')
+            start_response('200 OK', [('Content-type', 'application/force-download')])
+            return[fp.read()]
+        except Exception as e:
+            start_response('404 Not Found',[])      # 404エラー設定
+            return ['404 Not Found'.encode()]       # 応答メッセージ(404)を返却
     if path != '/':                                 # パスがルート以外のとき
         start_response('404 Not Found',[])          # 404エラー設定
         return ['404 Not Found'.encode()]           # 応答メッセージ(404)を返却
@@ -221,18 +230,23 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
             filter_dev.append(query[5:12])
             hist = 1
 
-    html += "Filter :"
+    html += 'Filter :'
     if len(filter_dev) > 0:
-        html += ' device = ' + str(filter_dev)
+        html += ' <a href="/">device</a> = ' + str(filter_dev)
     if len(filter_item) > 0:
-        html += ' item = ' + str(filter_item)
+        html += ' <a href="/?items">item</a> = ' + str(filter_item)
     if len(filter_dev) == 0 and len(filter_item) == 0:
         html += ' None'
-    html += ", Order : " + sort_col + '<br>\n'
+
+    if sort_col == 'devices':
+        html += ', <a href="/?items">Order</a> : '
+    else:
+        html += ', <a href="/?devices">Order</a> : '
+    html += sort_col + '<br>\n'
 
     html += '<table border=1>\n'                    # 作表を開始
     html += '<tr><th><a href="?devices">デバイス名</a></th>'
-    html += '<th><a href="?items">項目</a></th><th>日 時:分</th><th>値</th>'
+    html += '<th><a href="?items">項目</a></th><th>日 時:分:秒</th><th>値</th>'
     html += '<th colspan = 3>グラフ</th></tr>\n'    # 「グラフ」を表示
     col_dict = dict()
     for dev in sorted(devices):
@@ -263,8 +277,14 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
                         hist = len(dev_vals[dev])
                         i_max_hist *= hist
                     if i == 0:
-                        html += '<tr><td rowspan = ' + str(i_max_hist) + '>'\
-                              + '<a href="?device=' + dev[0:5] + '">'\
+                        html += '<tr><td rowspan = ' + str(i_max_hist) + '>'
+                        if hist > 0:
+                              filename = 'log_' + dev[0:7] + '.csv'
+                              html += dev[0:7] + '<br>[<a href="' + filename + '">csv</a>]</td>'
+                        elif dev[0:5] in filter_dev:
+                              html += '<a href="?hist=' + dev[0:7] + '">' + dev[0:7] + '</td>'
+                        else:
+                              html += '<a href="?device=' + dev[0:5] + '">'\
                               + dev[0:5] + '</a> <a href="?hist=' + dev[0:7] + '">' + dev[6] + '</td>'
                     else:
                         html += '<tr>'
@@ -278,13 +298,13 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
                             val = dev_vals[dev][j][i]
                             if val is None:
                                 val = 0
-                            html += '<td>' + dev_date[dev][j].strftime('%d %H:%M') + '</td>'
+                            html += '<td align ="center">' + dev_date[dev][j].strftime('%d %H:%M:%S') + '</td>'
                             html += barChartHtml(colmun[1], minmax, val)   # 棒グラフ化
                             html += '</tr>\n'
                     else:
                         html += '<td><a href="?items&item=' + colmun[0] + '">'\
                               + colmun[0] + '</a></td>\n'
-                        html += '<td>' + dev_date[dev][-1].strftime('%d %H:%M') + '</td>'
+                        html += '<td align ="center">' + dev_date[dev][-1].strftime('%d %H:%M:%S') + '</td>'
                         html += barChartHtml(colmun[1], minmax, val)   # 棒グラフ化
 
                 elif sort_col == 'items':
@@ -312,7 +332,7 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
                          + '<a href="?items&item=' + colmun[0] + '">'\
                          + colmun[0] + '</a></td>\n'
                 # print('debug barChartHtml:', minmax, val) ##確認用
-                html += '<td>' + dev_date[dev][-1].strftime('%d %H:%M') + '</td>'
+                html += '<td align ="center">' + dev_date[dev][-1].strftime('%d %H:%M:%S') + '</td>'
                 html += barChartHtml(colmun[1], minmax, val)   # 棒グラフ化
                 j += 1
 
