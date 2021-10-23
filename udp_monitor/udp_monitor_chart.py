@@ -27,7 +27,7 @@ OFFSET_VALUE = {\
 sensors = [\
     'temp0','hall0','adcnv','btn_s','pir_s','illum',\
     'temp.','humid','press','envir','accem','rd_sw',\
-    'press','e_co2',\
+    'press','e_co2','janke',\
     'actap','awsin','count','esp32','ident','medal',\
     'meter','ocean','river','tftpc','timer','voice',\
     'xb_ac','xb_ct','xb_ev','xb_sw','xbbat','xbbel',\
@@ -46,6 +46,7 @@ csvs = {\
     'press':[('Temperature','deg C'),('Pressure','hPa')],\
     'envir':[('Temperature','deg C'),('Humidity','%'),('Pressure','hPa')],\
     'e_co2':[('Temperature','deg C'),('Humidity','%'),('Pressure','hPa'),('CO2','ppm'),('TVOC','ppb'),('Counter','')],\
+    'janke':[('Janken',''),('Fingers','')],\
     #'accem':[('Accelerometer X','g'),('Accelerometer Y','g'),('Accelerometer Z','g')],\
     'accem':[('Accelerometer X','m/s2'),('Accelerometer Y','m/s2'),('Accelerometer Z','m/s2')],\
     'actap':[('Power','W'),('Cumulative','Wh'),('Time','Seconds')],\
@@ -79,6 +80,7 @@ csvs_range = {\
     ('CH4','ppm'):              (0,2000),\
     ('TVOC','ppb'):             (0,5000),\
     ('Counter',''):             (0,10),\
+    ('Fingers',''):             (0,5),\
     ('Accelerometer X','m/s2'): (-9.8,9.8),\
     ('Accelerometer Y','m/s2'): (-9.8,9.8),\
     ('Accelerometer Z','m/s2'): (-9.8,9.8),\
@@ -103,7 +105,7 @@ csvs_range = {\
 
 # センサ機器以外（文字データ入り）の登録デバイス
 notifyers = [\
-    'adash','atalk','cam_a','ir_in','janke','sound',\
+    'adash','atalk','cam_a','ir_in','sound',\
     'xb_ir','xbidt'\
 ]
 
