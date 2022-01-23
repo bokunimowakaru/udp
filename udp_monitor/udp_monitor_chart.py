@@ -5,6 +5,9 @@
 # UDPで受信したIoTセンサ機器の値を棒グラフで表示します。
 # （Webブラウザで http://127.0.0.1:8080 にアクセスするとグラフ表示されます）
 #
+# 最新版：
+# https://bokunimo.net/git/udp/blob/master/udp_monitor/udp_monitor_chart.py
+#
 #                                          Copyright (c) 2021-2022 Wataru KUNINO
 ################################################################################
 
@@ -39,6 +42,7 @@ sensors = [\
 csvs = {\
     'btn_s':[('Ringing','')],\
     'pir_s':[('Wake up Switch',''),('PIR Switch','')],\
+    'illum':[('Illuminance','lx')],\
     'rd_sw':[('Wake up Switch',''),('Reed Switch','')],\
     'temp0':[('Temperature','deg C')],\
     'temp.':[('Temperature','deg C')],\
