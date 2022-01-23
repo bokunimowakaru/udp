@@ -5,7 +5,7 @@
 # UDPで受信したIoTセンサ機器の値を棒グラフで表示します。
 # （Webブラウザで http://127.0.0.1:8080 にアクセスするとグラフ表示されます）
 #
-#                                               Copyright (c) 2021 Wataru KUNINO
+#                                          Copyright (c) 2021-2022 Wataru KUNINO
 ################################################################################
 
 # 初期設定
@@ -37,6 +37,7 @@ sensors = [\
 
 # センサ機器用CSV形式データの項目（数値データ）
 csvs = {\
+    'btn_s':[('Ringing','')],\
     'pir_s':[('Wake up Switch',''),('PIR Switch','')],\
     'rd_sw':[('Wake up Switch',''),('Reed Switch','')],\
     'temp0':[('Temperature','deg C')],\
@@ -417,6 +418,18 @@ while thread.is_alive and sock:                     # 永久ループ(httpd,udp�
             s += ', '                                   # 「,」を追加
             if i is not None:                           # データがある時
                 s += str(i)                             # データを変数sに追加
+    elif dev in pingpongs:
+        print('Ping/Pong Device,',dev,'-> btn_s_1')
+        if dev == 'Ping':
+            vals = ['1']
+            s = ', 1'
+        elif dev == 'Pong':
+            vals = ['0']
+            s = ', 0'
+        else:
+            vals = ['-1']
+            s = ', -1'
+        dev = 'btn_s_1'
     else:
         s = ', '                                        # 文字列変数
         for c in udp:                                   # UDPパケット内
