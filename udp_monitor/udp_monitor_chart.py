@@ -18,6 +18,7 @@ SAVE_CSV = True             # CSVファイルの保存(True:保存,False:保存�
 DEV_CHECK = False           # 未登録デバイス保存(True:破棄,False:UNKNOWNで保存)
 ELEVATION = 0               # 標高(m) 気圧値の補正用
 HIST_BUF_N = 10             # 1センサ値あたりの履歴保持数
+DEVICE_MAX = 50             # 最大デバイス数(管理台数)
 
 # 補正用(表示のみ・保存データは補正されない)
 OFFSET_VALUE = {\
@@ -110,7 +111,7 @@ csvs_range = {\
 
 # センサ機器以外（文字データ入り）の登録デバイス
 notifyers = [\
-    'adash','atalk','cam_a','ir_in','sound',\
+    'adash','atalk','cam_a','ir_in','janke','sound',\
     'xb_ir','xbidt'\
 ]
 
@@ -442,6 +443,9 @@ while thread.is_alive and sock:                     # 永久ループ(httpd,udp�
     filename = 'log_' + dev + '.csv'                    # ファイル名を作成
     if dev not in devices:
         print('NEW Device,',dev)
+        if len(devices) > DEVICE_MAX:                   # 管理可能台数を超過
+            print('over the limit, DEVICE_MAX,',devices)
+            continue                                    # whileに戻る
         devices.append(dev)
         # print(sorted(devices))
         if SAVE_CSV and not os.path.exists(filename):
