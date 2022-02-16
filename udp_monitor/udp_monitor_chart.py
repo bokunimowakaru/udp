@@ -222,9 +222,12 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
     html = '<html>\n<head>\n'                       # HTMLコンテンツを作成
     html += '<meta http-equiv="refresh" content="10;">\n'   # 自動再読み込み
     html += '</head>\n<body>\n'                     # 以下は本文
-    html += '<h1>UDPセンサ用モニタ ('\
-          + str(len(devices)) + ' devices)</h1>\n'
-
+    html += '<h1>UDPセンサ用モニタ (<a href="/">'\
+          + str(len(devices));
+    if len(devices) == 1:
+        html += ' device</a>)</h1>\n'
+    else:
+        html += ' devices</a>)</h1>\n'
     queries  = environ.get('QUERY_STRING').lower().split('&')
     # print('debug queries:',queries) ##確認用
 
