@@ -206,7 +206,7 @@ def barChartHtml(colmun, range, val, color='lightgreen'):    # 棒グラフHTML�
 
 def wsgi_app(environ, start_response):              # HTTPアクセス受信時の処理
     path  = environ.get('PATH_INFO')                # リクエスト先のパスを代入
-    if (path[1:5] == 'log_') and (path[5:10] in sensors) and (path[12:16] == '.csv'):
+    if (len(path)==16) and (path[1:5] == 'log_') and (path[5:10] in sensors) and (path[12:16] == '.csv'):
         filename = 'log_' + path[5:12] + '.csv'
         try:
             fp = open(filename, 'rb')
