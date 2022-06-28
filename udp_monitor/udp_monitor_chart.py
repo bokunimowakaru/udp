@@ -229,6 +229,7 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
         html += ' device</a>)</h1>\n'
     else:
         html += ' devices</a>)</h1>\n'
+
     queries  = environ.get('QUERY_STRING').lower().split('&')
     # print('debug queries:',queries) ##確認用
 
@@ -388,19 +389,24 @@ if argc >= 2:                                       # 入力パラメータ数�
         port = UDP_PORT                             # UDPポート番号を1024に
 else:
     port = UDP_PORT
-print('Listening UDP port', port, '...')            # ポート番号表示
-try:
-    sock=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)# ソケットを作成
-    sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)    # オプション
-    sock.bind(('', port))                           # ソケットに接続
-except Exception as e:                              # 例外処理発生時
-    print(e)                                        # エラー内容を表示
-    exit()                                          # プログラムの終了
+sock = None
+thread = None
 
-thread = threading.Thread(target=httpd, daemon=True)# スレッドhttpdの実体化
-thread.start()                                      # スレッドhttpdの起動
-
-while thread.is_alive and sock:                     # 永久ループ(httpd,udp動作中
+while True:
+    if not thread or not thread.is_alive:
+        print('Starting httpd', http_port, '...')       # ポート番号表示
+        thread = threading.Thread(target=httpd, daemon=True) # スレッドhttpdの実体化
+        thread.start()                                  # httpdの起動
+    if not sock:
+        print('Listening UDP port', port, '...')        # ポート番号表示
+        try:
+            sock=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)# ソケットを作成
+            sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)    # オプション
+            sock.bind(('', port))                       # ソケットに接続
+        except Exception as e:                          # 例外処理発生時
+            print(e)                                    # エラー内容を表示
+            delay(30)                                   # 連続再接続防止用の待ち時間
+            continue                                    # 再接続
     udp, udp_from = sock.recvfrom(buf_n)                # UDPパケットを取得
     try:
         udp = udp.decode()                              # UDPデータを文字列に変換
