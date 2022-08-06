@@ -132,7 +132,6 @@ import socket
 import datetime
 from wsgiref.simple_server import make_server       # WSGIサーバ
 from getpass import getuser                         # ユーザ取得を組み込む
-from time import sleep                              # スリープ機能を組み込む
 import threading                                    # スレッド管理を組み込む
 
 def get_dev_name(s):                                    # デバイス名を取得
