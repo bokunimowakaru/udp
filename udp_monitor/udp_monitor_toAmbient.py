@@ -147,6 +147,7 @@ import urllib.request                               # HTTPリクエストAmbient
 import json                                         # JSON変換ライブラリ
 from getpass import getuser                         # ユーザ取得を組み込む
 import time                                         # 時間取得を組み込む
+from time import sleep                              # スリープ機能を組み込む
 import threading                                    # スレッド管理を組み込む
 
 def get_dev_name(s):                                    # デバイス名を取得
@@ -435,7 +436,7 @@ while True:
             sock.bind(('', port))                       # ソケットに接続
         except Exception as e:                          # 例外処理発生時
             print(e)                                    # エラー内容を表示
-            delay(30)                                   # 連続再接続防止用の待ち時間
+            sleep(30)                                   # 連続再接続防止用の待ち時間
             continue                                    # 再接続
     udp, udp_from = sock.recvfrom(buf_n)                # UDPパケットを取得
     try:
