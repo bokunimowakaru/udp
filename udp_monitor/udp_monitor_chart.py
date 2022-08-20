@@ -132,7 +132,6 @@ import socket
 import datetime
 from wsgiref.simple_server import make_server       # WSGIサーバ
 from getpass import getuser                         # ユーザ取得を組み込む
-import time                                         # 時間取得を組み込む
 from time import sleep                              # スリープ機能を組み込む
 import threading                                    # スレッド管理を組み込む
 
@@ -375,7 +374,7 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
     if http_port != 80:
         html += ':' + str(http_port)
     html += '/?{devices|items}[&device=name][&item=name][&hist=device_name]</font></div>\n'
-    html += '<div>Copyright (c) 2021 <a href="https://bokunimo.net">Wataru KUNINO</a></div>\n'
+    html += '<div>Copyright (c) 2021-2022<a href="https://bokunimo.net">Wataru KUNINO</a></div>\n'
     html += '</tr>\n</table>\n'                     # 表の終了
     html += '</body>\n</html>\n'                    # htmlの終了
     start_response('200 OK', [('Content-type', 'text/html; charset=utf-8')])
