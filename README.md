@@ -2,6 +2,13 @@
 
 UDP Beacon (advertising) Transmitter and Receiver Examples for IoT Application.  
 
+## Language
+
+Select language to transrate this page:
+
+* [Japanese(日本語)](https://translate.google.com/website?sl=en&tl=ja&hl&u=https://git.bokunimo.com/udp/)
+* [English(英語)](https://git.bokunimo.com/udp/)
+
 ## About "UDPxCSV" (UDP times CSV)
 
 UDPxCSV is a simple transmission format for sensor systems which I authored for "Transistor Technology (トランジスタ技術 2016年 9月号 CQ出版社)".  
@@ -16,13 +23,6 @@ Fig. Sensor Data Transmission Format:
 |e.g. PIR        | p i r _ s       | _           | 1 (1~9)     | ,           | 1 , 1              | \n          |
 
 ![Sensor Data Transmission Format](https://bokunimo.net/blog/wp-content/uploads/2022/06/csv.jpg)
-
-## Language
-
-Select language to transrate this page:
-
-* [Japanese(日本語)](https://translate.google.com/website?sl=en&tl=ja&hl&u=https://git.bokunimo.com/udp/)
-* [English(英語)](https://git.bokunimo.com/udp/)
 
 ## Contents in this Repository
 
