@@ -58,6 +58,15 @@ There are some simple monitoring tools in root directory of this repository "udp
 
 ## Sensor Transmitters for UDPxCSV
 
+The above picture shows Humidity Sensor which structed by Rasberry Pi, M5 ENV II or III sensor,
+and Python code [ex3_tx_humi.py](https://github.com/bokunimowakaru/udp/blob/master/learning/ex3_tx_humi.py) in learning direcrory.  
+
+![Humidity Sensor for Raspberry Pi](https://raw.githubusercontent.com/bokunimowakaru/udp/master/learning/humid_sesnor.jpg)
+
+On the next picture, there is ESP8266 and a humidity sensor AE-SH31 on a breadbord.  
+
+![Humidity Sensor](https://bokunimo.net/blog/wp-content/uploads/yahoo/blog_import_5c796d4c214c7.jpg)
+
 ### Links in English (Google Transrater)
 
 Web sites about UDPxCSV sensors:
