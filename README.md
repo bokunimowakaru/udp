@@ -1,6 +1,6 @@
 # udp: Sensor Data Transmission Format named "UDPxCSV" (UDP times CSV)
 
-UDP Beacon (advertising) Transmitter and Receiver Examples for IoT Application.  
+UDP Beacon (advertising) Transmitter and Receiver Examples for IoT Sensor Application.  
 
 ## Language
 
