@@ -14,9 +14,9 @@ Select language to transrate this page:
 UDPxCSV is a simple transmission format for sensor systems which I authored for "Transistor Technology (トランジスタ技術 2016年 9月号 CQ出版社)".  
 It has defined 5 bytes device name, 1 byte separator '_', 1 byte identification number, 1 byte comma for the separated code, CSV payload, and LF code.  
 
-Fig. Sensor Data Transmission Format:  
+Fig. Sensor Data Transmission Format (bytes):  
 
-|Sensor (bytes)  |Device Name (5)  |Separator (1)|ID Number (1)|Separator (1)|Payload (variable)  |Line Feed (1)|
+|Sensor          |Device Name (5)  |Separator (1)|ID Number (1)|Separator (1)|Payload (variable)  |Line Feed (1)|
 |----------------|-----------------|-------------|-------------|-------------|--------------------|-------------|
 |e.g. Humidity   | H u m i d       | _           | 1 (1~9)     | ,           | 2 7 . 0 ,   7 5 . 0| \n          |
 |e.g. Temperature| t e m p .       | _           | 1 (1~9)     | ,           | 2 7 . 0            | \n          |
