@@ -65,14 +65,14 @@ Web sites about UDPxCSV sensors:
 * [IoT Sensor Core for Ambient](https://translate.google.com/website?sl=ja&tl=en&hl&u=https://bokunimo.net/ambient/)
 
 Books written in Japanese:
-* [超特急Web接続!ESPマイコン・プログラム全集](https://translate.google.com/website?sl=ja&tl=en&hl&u=https://amzn.to/3JWq78I)
-* [Pythonで作るIoTシステム プログラム・サンプル集](https://translate.google.com/website?sl=ja&tl=en&hl&u=https://amzn.to/3ls4Vx4)
+* [Pythonで作るIoTシステム プログラム・サンプル集 in Japanese](https://translate.google.com/website?sl=ja&tl=en&hl&u=https://amzn.to/3ls4Vx4)
+* [超特急Web接続!ESPマイコン・プログラム全集 in Japanese](https://translate.google.com/website?sl=ja&tl=en&hl&u=https://amzn.to/3JWq78I)
 
 ### Links in 日本語サイト
 * [ボクにもわかる IoTモジュール ESP-WROOM-02 ESP32-WROOM-32](https://git.bokunimo.com/esp/)
 * [IoT Sensor Core for Ambient](https://bokunimo.net/ambient/)
-* [超特急Web接続!ESPマイコン・プログラム全集](https://amzn.to/3JWq78I)
 * [Pythonで作るIoTシステム プログラム・サンプル集](https://amzn.to/3ls4Vx4)
+* [超特急Web接続!ESPマイコン・プログラム全集](https://amzn.to/3JWq78I)
 
 ## Troubleshooting
 
