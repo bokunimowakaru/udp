@@ -18,6 +18,13 @@ Fig. Sensor Data Transmission Format:
 
 ![Sensor Data Transmission Format](https://bokunimo.net/blog/wp-content/uploads/2022/06/csv.jpg)
 
+## Language
+
+Select language to transrate this page:
+
+* [Japanese(日本語)](https://translate.google.com/website?sl=en&tl=ja&hl&u=https://git.bokunimo.com/udp/)
+* [English(英語)](https://git.bokunimo.com/udp/)
+
 ## Contents for "UDPxCSV" (UDP times CSV)
 
 * learning: Contents for Raspberry Pi  
