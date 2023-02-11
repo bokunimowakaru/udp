@@ -63,7 +63,8 @@ and Python code [ex3_tx_humi.py](https://github.com/bokunimowakaru/udp/blob/mast
 
 ![Humidity Sensor for Raspberry Pi](https://raw.githubusercontent.com/bokunimowakaru/udp/master/learning/humid_sesnor.jpg)
 
-On the next picture, there are ESP8266 and a humidity sensor AE-SH31 on a breadbord.  
+On the next picture, there are ESP8266 and a humidity sensor AE-SH31 on a breadbord,
+and the power is supplied 3 x AAA alkaline batteries for it.
 
 ![Humidity Sensor](https://bokunimo.net/blog/wp-content/uploads/yahoo/blog_import_5c796d4c214c7.jpg)
 
