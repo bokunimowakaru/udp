@@ -1,4 +1,4 @@
-# udp: Sensor Data Transmission Format named "UDPxCSV" (UDP times CSV)
+# udp: Sensor Data Transmission Format named "UDPxCSV" (UDP Cross CSV)
 
 UDP Beacon (advertising) Transmitter and Receiver Examples for IoT Sensor Application.  
 
@@ -9,7 +9,7 @@ Select language to transrate this page:
 * [Japanese(日本語)](https://translate.google.com/website?sl=en&tl=ja&hl&u=https://git.bokunimo.com/udp/)
 * [English(英語)](https://git.bokunimo.com/udp/)
 
-## About "UDPxCSV" (UDP times CSV)
+## About "UDPxCSV" (UDP Cross CSV)
 
 UDPxCSV is a simple transmission format for sensor systems which I authored for "Transistor Technology (トランジスタ技術 2016年 9月号 CQ出版社)".  
 It has defined 5 bytes device name, 1 byte separator '_', 1 byte identification number, 1 byte comma for the separated code, CSV payload, and LF code.  
@@ -26,7 +26,7 @@ Fig. Sensor Data Transmission Format:
 
 ## Contents in this Repository
 
-Python codes of "UDPxCSV" (UDP times CSV) for Raspberry Pi:
+Python codes of "UDPxCSV" (UDP Cross CSV) for Raspberry Pi:
 
 * learning: Contents for Raspberry Pi  
 * udp_monitor: Monitoring Sensor Application example for "UDPxCSV"  
