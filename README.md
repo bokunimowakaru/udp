@@ -4,9 +4,8 @@ UDP Beacon (advertising) Transmitter and Receiver Examples for IoT Application.
 
 ## About "UDPxCSV" (UDP times CSV)
 
-This is a simple transmission format for sensor systems which I authored for "トランジスタ技術2016年9月号 (CQ出版社)".  
+UDPxCSV is a simple transmission format for sensor systems which I authored for "Transistor Technology (トランジスタ技術 2016年 9月号 CQ出版社)".  
 It has defined 5 bytes device name, 1 byte separator '_', 1 byte identification number, 1 byte comma for the separated code, CSV payload, and LF code.  
-
 
 Fig. Sensor Data Transmission Format:  
 
@@ -25,7 +24,9 @@ Select language to transrate this page:
 * [Japanese(日本語)](https://translate.google.com/website?sl=en&tl=ja&hl&u=https://git.bokunimo.com/udp/)
 * [English(英語)](https://git.bokunimo.com/udp/)
 
-## Contents for "UDPxCSV" (UDP times CSV)
+## Contents in this Repository
+
+Python codes of "UDPxCSV" (UDP times CSV) for Raspberry Pi:
 
 * learning: Contents for Raspberry Pi  
 * udp_monitor: Monitoring Sensor Application example for "UDPxCSV"  
@@ -33,7 +34,7 @@ Select language to transrate this page:
 
 ### Learning Contents for Raspberry Pi
 
-There are example codes for learning "UDPxCSV" written in Python.  
+There are example codes for learning "UDPxCSV" written in Python:  
 [https://github.com/bokunimowakaru/udp/tree/master/learning](https://github.com/bokunimowakaru/udp/tree/master/learning)
 
 ### Monitoring Sensor Application example
@@ -55,6 +56,24 @@ There are some simple monitoring tools in root directory of this repository "udp
 
 [https://github.com/bokunimowakaru/udp/](https://github.com/bokunimowakaru/udp/)
 
+## Sensor Transmitters for UDPxCSV
+
+### Links in English (Google Transrater)
+
+Web sites about UDPxCSV sensors:
+* [ボクにもわかる IoTモジュール ESP-WROOM-02 ESP32-WROOM-32](https://translate.google.com/website?sl=ja&tl=en&hl&u=https://git.bokunimo.com/esp/)
+* [IoT Sensor Core for Ambient](https://translate.google.com/website?sl=ja&tl=en&hl&u=https://bokunimo.net/ambient/)
+
+Books written in Japanese:
+* [超特急Web接続!ESPマイコン・プログラム全集](https://translate.google.com/website?sl=ja&tl=en&hl&u=https://amzn.to/3JWq78I)
+* [Pythonで作るIoTシステム プログラム・サンプル集](https://translate.google.com/website?sl=ja&tl=en&hl&u=https://amzn.to/3ls4Vx4)
+
+### Links in 日本語サイト
+* [ボクにもわかる IoTモジュール ESP-WROOM-02 ESP32-WROOM-32](https://git.bokunimo.com/esp/)
+* [IoT Sensor Core for Ambient](https://bokunimo.net/ambient/)
+* [超特急Web接続!ESPマイコン・プログラム全集](https://amzn.to/3JWq78I)
+* [Pythonで作るIoTシステム プログラム・サンプル集](https://amzn.to/3ls4Vx4)
+
 ## Troubleshooting
 
 ### Trouble of Recieving UDPxCSV
@@ -67,8 +86,8 @@ If you cannot receive UDP, please check the following possible causes.
 
 Packet Discard Function may occur due to the malfunction of the network equipment's security function, isolation function, loop prevention function, or following Malfunction of Packet Discard Function:
 
-As the unidirectional UDP communication, a bridge function of network equipment may mistakenly recognize it as an unnecessary packet and discard it.  
-In this case, it can be repaired by repeated works of two-way communication, using Ping is one of the solutions; please input Ping command like "ping 192.168.1.XX⏎" on the LXTerminal.
+As the unidirectional UDP communication, a bridge function of network equipments may mistakenly recognize it, as an unnecessary packet and discard it.  
+In this case, it can be repaired by repeated works of two-way communication, using Ping is one of the solutions. So, please input Ping command like "ping 192.168.1.XX⏎" on the LXTerminal.
 Or reboot your gateway, wireless access point, or switching hub. If you restart only a device that does not include a DHCP server, you need to run two-way communication such as ping after restarting.  
 After repaired, if it continues only one-way communication continues, the bridge function will discard packets again. It needs some apps usinig two-way communication on a regular basis.  
 
