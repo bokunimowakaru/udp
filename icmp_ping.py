@@ -39,8 +39,8 @@ def checksum_calc(payload):
     return sum.to_bytes(2, 'big')
 
 argc = len(sys.argv)                                    # 引数の数をargcへ代入
-print('ICMP Ping Sender')                                    # タイトル表示
-print('Usage: sudo',sys.argv[0],'ip_address [data...]') # 使用方法
+print('ICMP Ping Sender Reciever')                      # タイトル表示
+print('Usage: sudo',sys.argv[0],'[ip_address] [data...]') # 使用方法
 if argc >= 2:                                           # 入力パラメータ数の確認
     try:
         ipaddress.ip_interface(sys.argv[1])

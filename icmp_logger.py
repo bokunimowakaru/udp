@@ -26,7 +26,7 @@ def checksum_calc(payload):
     sum = ~(sum) & 0xFFFF
     return sum.to_bytes(2, 'big')
 
-print('ICMP Ping Logger')                                    # タイトル表示
+print('ICMP Logger')                                    # タイトル表示
 print('Usage: sudo',sys.argv[0]) # 使用方法
 
 try:
