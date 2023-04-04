@@ -79,7 +79,7 @@ except Exception as e:                                  # 例外処理発生時
     print(e)                                            # エラー内容を表示
     exit()                                              # プログラムの終了
 if sock:                                                # 作成に成功したとき
-    print('ICMP TX('+('{:02x}'.format(len(payload)))+')',end=': ')
+    print('ICMP TX('+('{:02x}'.format(len(payload)))+')',end=' : ')
     for c in payload:
         print('{:02x}'.format(c), end=' ')             # 受信データを表示
     print()
@@ -102,9 +102,10 @@ if sock:                                                # 作成に成功した�
             icmp_len = length - header_length
             identifier = int.from_bytes(icmp[24:26], 'big')
             sequence = int.from_bytes(icmp[26:28], 'big')
-            if identifier == int.from_bytes(icm_idnt,'big') and sequence == int.from_bytes(icm_snum,'big'):
+            check = not int.from_bytes(checksum_calc(icmp[20:]),'big')
+            if identifier == int.from_bytes(icm_idnt,'big') and sequence == int.from_bytes(icm_snum,'big') and check:
                 # icmp[0] == 0x45: IPv4と、IPヘッダ長20バイトに限定
-                print('ICMP RX('+'{:02x}'.format(icmp_len)+')',end=': ')
+                print('ICMP RX('+'{:02x}'.format(icmp_len)+')',end=' : ')
                 for i in range(len(icmp)-len(payload),len(icmp)):
                     print('{:02x}'.format(icmp[i]), end=' ')               # 受信データを表示
                 print()
@@ -117,6 +118,7 @@ if sock:                                                # 作成に成功した�
                 print('ICMP Length =',icmp_len)
                 print('ICMP Type   =','{:02x}'.format(icmp[20]))
                 print('ICMP Code   =','{:02x}'.format(icmp[21]))
+                print('Checksum    =', 'Passed' if check else 'Failed')
                 print('Identifier  =','{:04x}'.format(identifier))
                 print('Sequence N  =','{:04x}'.format(sequence))
                 if icmp_len > 8:
