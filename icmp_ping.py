@@ -14,15 +14,18 @@
 
 import sys
 import socket
+import ipaddress
+from time import time
+from random import randint
 
 adr = '127.0.0.1'
 icm_type = b'\x08'      # header[0] Type = echo message
-icm_code = b'\x00'      # header[1] Code
-icm_csum = b'\x00\x00'  # header[2:4] Checksum
+icm_code = b'\x00'      # header[1] Code = 0
+icm_csum = b'\x00\x00'  # header[2:4] Checksum = 0x0000 計算前の初期値
 icm_idnt = b'\x00\x04'  # header[4:6] Identifier
 icm_snum = b'\x00\x01'  # header[6:8] Sequence Number
 
-def checksum(payload):
+def checksum_calc(payload):
     if len(payload)%2 == 1:
         payload += b'\x00'  # total length is odd, padded with one octet of zeros
     sum = 0x0000
@@ -32,27 +35,43 @@ def checksum(payload):
         if sum > 0xFFFF:
             sum += 1
             sum &= 0xFFFF
-    payload[2] = ~(sum >> 8) & 0xFF
-    payload[3] = ~(sum) & 0xFF
-    return payload
+    sum = ~(sum) & 0xFFFF
+    return sum.to_bytes(2, 'big')
 
 argc = len(sys.argv)                                    # 引数の数をargcへ代入
-print('ICMP Sender')                                    # タイトル表示
+print('ICMP Ping Sender')                                    # タイトル表示
 print('Usage: sudo',sys.argv[0],'ip_address [data...]') # 使用方法
 if argc >= 2:                                           # 入力パラメータ数の確認
-    adr = sys.argv[1]                                   # IPアドレスを設定
+    try:
+        ipaddress.ip_interface(sys.argv[1])
+        adr = sys.argv[1]                                   # IPアドレスを設定
+        del sys.argv[1]
+    except ValueError:
+        pass
 body = ''
-if argc >= 3:
-    for word in sys.argv[2:]:
+if argc >= 2:
+    for word in sys.argv[1:]:
         if len(body) > 0:
             body += ' '
         body += word
 
-print('send Ping "'+body+'" to',adr)
+if len(body) > 0:
+    print('send Ping "'+body+'" to',adr)
+else:
+    print('send Ping to',adr)
 
-header = bytearray(icm_type + icm_code + icm_csum + icm_idnt + icm_snum)
-payload = bytearray(header + body.encode())
-payload = checksum(payload)
+# Header の生成
+icm_idnt = randint(0,65535).to_bytes(2, 'big')			# Identifier = 乱数
+icm_snum =  (int(time()) % 65536).to_bytes(2, 'big')	# Sequence Number = 秒数
+header = icm_type + icm_code + icm_csum + icm_idnt + icm_snum
+
+# Checksum の計算
+payload = header + body.encode()
+checksum = checksum_calc(payload)
+
+# Header にChecksumを付与
+header = icm_type + icm_code + checksum + icm_idnt + icm_snum
+payload = header + body.encode()
 
 try:
     sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
@@ -60,7 +79,7 @@ except Exception as e:                                  # 例外処理発生時
     print(e)                                            # エラー内容を表示
     exit()                                              # プログラムの終了
 if sock:                                                # 作成に成功したとき
-    print('TX('+'{:02x}'.format(len(payload))+')',end=': ')
+    print('ICMP TX('+('{:02x}'.format(len(payload)))+')',end=': ')
     for c in payload:
         print('{:02x}'.format(c), end=' ')             # 受信データを表示
     print()
@@ -72,11 +91,36 @@ if sock:                                                # 作成に成功した�
             icmp = sock.recv(256)                                        # 受信データの取得
         except socket.timeout:
             break
-        if icmp[3] == len(icmp):
-            print('RX('+'{:02x}'.format(len(icmp))+')',end=': ')
-            for i in range(len(icmp)-len(payload),len(icmp)):
-                print('{:02x}'.format(icmp[i]), end=' ')               # 受信データを表示
-            print()
+        length = int(256 * icmp[2] + icmp[3])
+        header_length = int((icmp[0]%16)*4)
+        protocol = icmp[9]
+        source_adr = int.from_bytes(icmp[12:16], 'big')
+        source_adr_s = str(ipaddress.IPv4Address(source_adr))
+        dest_adr = int.from_bytes(icmp[16:20], 'big')
+        dest_adr_s = str(ipaddress.IPv4Address(dest_adr))
+        if icmp[0] == 0x45 and protocol == 0x01 and length == len(icmp) and icmp[20] == 0x00:
+            icmp_len = length - header_length
+            identifier = int.from_bytes(icmp[24:26], 'big')
+            sequence = int.from_bytes(icmp[26:28], 'big')
+            if identifier == int.from_bytes(icm_idnt,'big') and sequence == int.from_bytes(icm_snum,'big'):
+                # icmp[0] == 0x45: IPv4と、IPヘッダ長20バイトに限定
+                print('ICMP RX('+'{:02x}'.format(icmp_len)+')',end=': ')
+                for i in range(len(icmp)-len(payload),len(icmp)):
+                    print('{:02x}'.format(icmp[i]), end=' ')               # 受信データを表示
+                print()
+                print('IP Version  =','v'+str(int(icmp[0]>>4)))
+                print('IP Header   =',header_length)
+                print('IP Length   =',length)
+                print('Protocol    =','0x'+('{:02x}'.format(protocol)))
+                print('Source      =',source_adr_s)
+                print('Destination =',dest_adr_s)
+                print('ICMP Length =',icmp_len)
+                print('ICMP Type   =','{:02x}'.format(icmp[20]))
+                print('ICMP Code   =','{:02x}'.format(icmp[21]))
+                print('Identifier  =','{:04x}'.format(identifier))
+                print('Sequence N  =','{:04x}'.format(sequence))
+                if icmp_len > 8:
+                    print('ICMP Data   =',icmp[28:].decode())
     sock.close()                                                # ソケットの切断
 
 ###############################################################################
@@ -92,7 +136,7 @@ if sock:                                                # 作成に成功した�
 '''
 
 ###############################################################################
-# 参考文献 INTERNET CONTROL MESSAGE PROTOCOL (IETF RFC)
+# 参考文献 INTERNET CONTROL MESSAGE PROTOCOL (IETF RFC 792)
 '''
     https://www.rfc-editor.org/rfc/rfc792
 
@@ -162,6 +206,34 @@ Echo or Echo Reply Message
       in the echo reply.
 
       Code 0 may be received from a gateway or a host.
+'''
+
+###############################################################################
+# 参考文献 INTERNET PROTOCOL (IETF RFC 791)
+'''
+    https://www.rfc-editor.org/rfc/rfc791
+    
+    3.1.  Internet Header Format
+
+      A summary of the contents of the internet header follows:
+
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |Version|  IHL  |Type of Service|          Total Length         |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |         Identification        |Flags|      Fragment Offset    |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |  Time to Live |    Protocol   |         Header Checksum       |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                       Source Address                          |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                    Destination Address                        |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                    Options                    |    Padding    |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
 '''
 ###############################################################################
 # 参考文献 python raw socket: Protocol not supported (stackoverflow)
