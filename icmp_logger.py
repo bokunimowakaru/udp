@@ -10,7 +10,8 @@ import sys
 import socket
 import ipaddress
 
-adr = '127.0.0.1'
+filter = True # True ：IPv4と、IPヘッダ長20バイト、ICMP、パケット長、チェックサムを確認する
+              # False：チェックサムのみを確認する
 
 def checksum_calc(payload):
     if len(payload)%2 == 1:
@@ -47,7 +48,7 @@ if sock:                                                # 作成に成功した�
         source_adr_s = str(ipaddress.IPv4Address(source_adr))
         dest_adr = int.from_bytes(icmp[16:20], 'big')
         dest_adr_s = str(ipaddress.IPv4Address(dest_adr))
-        if icmp[0] == 0x45 and protocol == 0x01 and length == len(icmp) and icmp[20] == 0x00:
+        if filter == False or (icmp[0] == 0x45 and protocol == 0x01 and length == len(icmp)):
             icmp_len = length - header_length
             identifier = int.from_bytes(icmp[24:26], 'big')
             sequence = int.from_bytes(icmp[26:28], 'big')
