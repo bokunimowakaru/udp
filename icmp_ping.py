@@ -61,8 +61,8 @@ else:
     print('send Ping to',adr)
 
 # Header の生成
-icm_idnt = randint(0,65535).to_bytes(2, 'big')			# Identifier = 乱数
-icm_snum =  (int(time()) % 65536).to_bytes(2, 'big')	# Sequence Number = 秒数
+icm_idnt = randint(0,65535).to_bytes(2, 'big')          # Identifier = 乱数
+icm_snum =  (int(time()) % 65536).to_bytes(2, 'big')    # Sequence Number = 秒数
 header = icm_type + icm_code + icm_csum + icm_idnt + icm_snum
 
 # Checksum の計算
@@ -75,8 +75,8 @@ payload = header + body.encode()
 
 try:
     sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
-except Exception as e:                                  # 例外処理発生時
-    print(e)                                            # エラー内容を表示
+except PermissionError:                                 # 例外処理発生時
+    print('PermissionError, 先頭に sudo を付与して実行してください')
     exit()                                              # プログラムの終了
 if sock:                                                # 作成に成功したとき
     print('ICMP TX('+('{:02x}'.format(len(payload)))+')',end=' : ')

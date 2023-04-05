@@ -27,12 +27,12 @@ def checksum_calc(payload):
     return sum.to_bytes(2, 'big')
 
 print('ICMP Logger')                                    # タイトル表示
-print('Usage: sudo',sys.argv[0]) # 使用方法
+print('Usage: sudo',sys.argv[0])                        # 使用方法
 
 try:
     sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
-except Exception as e:                                  # 例外処理発生時
-    print(e)                                            # エラー内容を表示
+except PermissionError:                                 # 例外処理発生時
+    print('PermissionError, 先頭に sudo を付与して実行してください')
     exit()                                              # プログラムの終了
 if sock:                                                # 作成に成功したとき
     sock.setsockopt(socket.SOL_IP, socket.IP_HDRINCL, 1)
@@ -105,101 +105,12 @@ if sock:                                                # 作成に成功した�
 # 参考文献 INTERNET CONTROL MESSAGE PROTOCOL (IETF RFC 792)
 '''
     https://www.rfc-editor.org/rfc/rfc792
-
-
-Echo or Echo Reply Message
-
-    0                   1                   2                   3
-    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |     Type      |     Code      |          Checksum             |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |           Identifier          |        Sequence Number        |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |     Data ...
-   +-+-+-+-+-
-
-   IP Fields:
-
-   Addresses
-
-      The address of the source in an echo message will be the
-      destination of the echo reply message.  To form an echo reply
-      message, the source and destination addresses are simply reversed,
-      the type code changed to 0, and the checksum recomputed.
-
-   IP Fields:
-
-   Type
-
-      8 for echo message;
-
-      0 for echo reply message.
-
-   Code
-
-      0
-
-   Checksum
-
-      The checksum is the 16-bit ones's complement of the one's
-      complement sum of the ICMP message starting with the ICMP Type.
-      For computing the checksum , the checksum field should be zero.
-      If the total length is odd, the received data is padded with one
-      octet of zeros for computing the checksum.  This checksum may be
-      replaced in the future.
-
-   Identifier
-
-      If code = 0, an identifier to aid in matching echos and replies,
-      may be zero.
-
-   Sequence Number
-
-      If code = 0, a sequence number to aid in matching echos and
-      replies, may be zero.
-
-   Description
-
-      The data received in the echo message must be returned in the echo
-      reply message.
-
-      The identifier and sequence number may be used by the echo sender
-      to aid in matching the replies with the echo requests.  For
-      example, the identifier might be used like a port in TCP or UDP to
-      identify a session, and the sequence number might be incremented
-      on each echo request sent.  The echoer returns these same values
-      in the echo reply.
-
-      Code 0 may be received from a gateway or a host.
 '''
 
 ###############################################################################
 # 参考文献 INTERNET PROTOCOL (IETF RFC 791)
 '''
     https://www.rfc-editor.org/rfc/rfc791
-    
-    3.1.  Internet Header Format
-
-      A summary of the contents of the internet header follows:
-
-
-        0                   1                   2                   3
-        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |Version|  IHL  |Type of Service|          Total Length         |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |         Identification        |Flags|      Fragment Offset    |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |  Time to Live |    Protocol   |         Header Checksum       |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |                       Source Address                          |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |                    Destination Address                        |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |                    Options                    |    Padding    |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
 '''
 ###############################################################################
 # 参考文献 python raw socket: Protocol not supported (stackoverflow)

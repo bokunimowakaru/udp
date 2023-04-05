@@ -11,22 +11,22 @@ Select language to transrate this page:
 
 ## About "UDPxCSV" (UDP Cross CSV)
 
-UDPxCSV is a simple transmission format for sensor systems which I authored for "Transistor Technology (トランジスタ技術 2016年 9月号 CQ出版社)".  
-It is structed defined 5 bytes device name, 1 byte separator '_', 1 byte identification number, 1 byte comma for the separated code, CSV payload, and LF code.  
+UDPxCSV is a simple transmission format for sensor systems which I authored for "トランジスタ技術 2016年 9月号 CQ出版社".  
+It is structed by the following format defined 5 bytes device name; 1 byte separator '_', 1 byte identification number, 1 byte comma for the separated code, CSV payload, and LF code.  
 
 Fig. Sensor Data Transmission Format (bytes):  
 
-|Sensor          |Device Name (5)  |Separator (1)|ID Number (1)|Separator (1)|Payload (variable)  |Line Feed (1)|
-|----------------|-----------------|-------------|-------------|-------------|--------------------|-------------|
-|e.g. Humidity   | H u m i d       | _           | 1 (1~9)     | ,           | 2 7 . 0 ,   7 5 . 0| \n          |
-|e.g. Temperature| t e m p .       | _           | 1 (1~9)     | ,           | 2 7 . 0            | \n          |
-|e.g. PIR        | p i r _ s       | _           | 1 (1~9)     | ,           | 1 , 1              | \n          |
+|Sensor     |Device Name (5)  |Separator (1)|ID Number (1)|Separator (1)|Payload (variable)  |Line Feed (1)|
+|-----------|-----------------|-------------|-------------|-------------|--------------------|-------------|
+|Humidity   | H u m i d       | _           | 1 (1~9)     | ,           | 2 7 . 0 ,   7 5 . 0| \n          |
+|Temperature| t e m p .       | _           | 1 (1~9)     | ,           | 2 7 . 0            | \n          |
+|PIR        | p i r _ s       | _           | 1 (1~9)     | ,           | 1 , 1              | \n          |
 
 ![Sensor Data Transmission Format](https://bokunimo.net/blog/wp-content/uploads/2022/06/csv.jpg)
 
 ## Contents in this Repository
 
-Python codes of "UDPxCSV" (UDP Cross CSV) for Raspberry Pi:
+Python code examples of "UDPxCSV" (UDP Cross CSV) for Raspberry Pi:  
 
 * learning: Contents for Raspberry Pi  
 * udp_monitor: Monitoring Sensor Application example for "UDPxCSV"  
@@ -48,7 +48,7 @@ The figure below shows recieved results from 32 sensor devices in my home.
 
 ### udp_logger.py
 
-There are some simple monitoring tools in root directory of this repository "udp":  
+There are some simple monitoring tools in the root directory of this repository "udp":  
 
 * udp_logger_basic.py
 * udp_logger.py
@@ -101,6 +101,34 @@ In this case, it can be repaired by repeated works of two-way communication, usi
 Or reboot your gateway, wireless access point, or switching hub. If you restart only a device that does not include a DHCP server, you need to run two-way communication such as ping after restarting.  
 After repaired, if it continues only one-way communication continues, the bridge function will discard packets again. It needs some apps usinig two-way communication on a regular basis.  
 
+## (Misc.) ICMP Ping
+
+This repository also contains some ICMP Ping examples for leaning the protocol about it.  
+
+* icmp_ping.py
+* icmp_logger.py
+* icmp_sender.py
+
+These files are needed the super user privileges.  So, please add a "sudo" command to the beginning of these files to run.  
+
+	pi@raspberry:~/udp $ sudo ./icmp_ping.py  
+	ICMP Ping Sender Reciever  
+	Usage: sudo ./icmp_ping.py [ip_address] [data...]  
+	send Ping to 127.0.0.1  
+	ICMP TX(08) : 08 00 93 c0 e5 b9 7e 85  
+	ICMP RX(08) : 00 00 9b c0 e5 b9 7e 85  
+	IP Version  = v4  
+	IP Header   = 20  
+	IP Length   = 28  
+	Protocol    = 0x01  
+	Source      = 127.0.0.1  
+	Destination = 127.0.0.1  
+	ICMP Length = 8  
+	ICMP Type   = 00  
+	ICMP Code   = 00  
+	Checksum    = Passed  
+	Identifier  = e5b9  
+	Sequence N  = 7e85  
 
 ## GitHub Pages (This Document)
 
