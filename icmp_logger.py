@@ -6,12 +6,17 @@
 # ICMPを受信します。
 # sudo ./icmp_logger.py
 
+import os
 import sys
 import socket
 import ipaddress
+import datetime
 
 filter = True # True ：IPv4と、IPヘッダ長20バイト、ICMP、パケット長、チェックサムを確認する
               # False：チェックサムのみを確認する
+
+SAVE_CSV = True             # CSVファイルの保存(True:保存,False:保存しない)
+filename = 'log_icmp._0.csv' # ファイル名
 
 def checksum_calc(payload):
     if len(payload)%2 == 1:
@@ -26,6 +31,16 @@ def checksum_calc(payload):
     sum = ~(sum) & 0xFFFF
     return sum.to_bytes(2, 'big')
 
+def save(data):
+    if SAVE_CSV == False:
+        return
+    try:
+        fp = open(filename, mode='a')                   # 書込用ファイルを開く
+    except Exception as e:                              # 例外処理発生時
+        print(e)                                        # エラー内容を表示
+    fp.write(data + '\n')                               # dataをファイルへ
+    fp.close()                                          # ファイルを閉じる
+
 print('ICMP Logger')                                    # タイトル表示
 print('Usage: sudo',sys.argv[0])                        # 使用方法
 
@@ -36,6 +51,7 @@ except PermissionError:                                 # 例外処理発生時
     exit()                                              # プログラムの終了
 if sock:                                                # 作成に成功したとき
     sock.setsockopt(socket.SOL_IP, socket.IP_HDRINCL, 1)
+    print('Listening ICMP...')
     while sock:
         try:
             icmp = sock.recv(256)                                        # 受信データの取得
@@ -54,8 +70,11 @@ if sock:                                                # 作成に成功した�
             sequence = int.from_bytes(icmp[26:28], 'big')
             check = not int.from_bytes(checksum_calc(icmp[20:]),'big')
             if check:
+                date = datetime.datetime.today()                    # 日付を取得
+                date_s = date.strftime('%Y/%m/%d %H:%M:%S')         # 日付を文字列に変更
+                print('Date        =',date_s)
                 # icmp[0] == 0x45: IPv4と、IPヘッダ長20バイトに限定
-                print('ICMP RX('+'{:02x}'.format(icmp_len)+')',end=' : ')
+                print('ICMP RX('+'{:02x}'.format(icmp_len)+')',end=' = ')
                 for i in range(20,28):
                     print('{:02x}'.format(icmp[i]), end=' ')               # 受信データを表示
                 print()
@@ -71,22 +90,32 @@ if sock:                                                # 作成に成功した�
                 print('Checksum    =', 'Passed' if check else 'Failed')
                 print('Identifier  =','{:04x}'.format(identifier))
                 print('Sequence N  =','{:04x}'.format(sequence))
+                s = date_s + ', ' + source_adr_s +', ' + str(identifier) +', '+str(sequence)
                 if icmp_len > 8:
                     try:
                         body = icmp[28:].decode()
                     except UnicodeDecodeError:
-                        body = '\n'
-                    if body.isprintable():
+                        body = ''
+                    if len(body) > 9 and body.isprintable():
                         print('ICMP Data   =',body)
                     else:
+                        body = ''
                         print('ICMP Data   = ',end='')
                         for i in range(28,len(icmp)):
                             print('{:02x}'.format(icmp[i]), end=' ')     # 受信データを表示
+                            body += '{:02x}'.format(icmp[i])
                             if (i-28) % 8 == 7:
                                 print('\n', end='              ')
                         if (len(icmp) - 28)%8 != 0:
                             print()
+                    s += ', '+body
                 print()
+                if SAVE_CSV and not os.path.exists(filename):
+                    fp = open(filename, mode='w')               # 書込用ファイルを開く
+                    fp.write('YYYY/MM/dd hh:mm:ss, IP Address, Identifier, Sequence, Data\n')    # CSV様式
+                    fp.close()                                  # ファイルを閉じる
+                if SAVE_CSV:
+                    save(s)                                     # ファイルに保存
     sock.close()                                                # ソケットの切断
 
 ###############################################################################
