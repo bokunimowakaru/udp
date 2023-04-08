@@ -151,6 +151,8 @@ These files are needed the super user privileges.  So, please add a "sudo" comma
 	Identifier  = e5b9  
 	Sequence N  = 7e85  
 
+Please see [https://git.bokunimo.com/ping/](https://git.bokunimo.com/ping/) for details of ICMP ping code examples.  
+
 ## GitHub Pages (This Document)
 
 * [https://git.bokunimo.com/udp/](https://git.bokunimo.com/udp/)
