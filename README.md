@@ -86,13 +86,34 @@ Books written in Japanese:
 
 ## Troubleshooting
 
-### Trouble of Recieving CSVxUDP
+### Problems Recieving CSVxUDP Packets
 
-If you cannot receive UDP, please check the following possible causes.
+If you cannot receive UDP Packets, please check the following possible causes.
 
 * Network Connection Error
 * IP Address Setting Error
+* Security Setting such as AP Isolation
+* Broadcasting Problems
 * Malfunction of Packet Discard Function
+
+#### Network Connection Error  
+
+Please check the network cables or Wi-Fi settings of the SSID and the password.  
+
+#### IP Address Setting Error  
+
+Plase check the DHCP server function on the router is enabled.  
+
+#### AP Isolation Function  
+
+If the devices are on your Wi-Fi LAN which structed by the router with the AP Isolation function, the pachet might not reach via the router. Please turn off the function, if the Wi-Fi LAN is not shared with other users.  
+Note: AP Isolation Function separates the paccet transportation between the terminal devices in the router, but it pass the devices to WAN via the router.  
+
+#### Broadcasting Problems
+
+Also some Wi-Fi routers discard broadcasted packets between the tarminals. In the case, please turn off the filter on the router, or swich the broadcast IP address '255.255.255.255' to the unicast such as '192.168.1.XX'.  
+
+#### Packet Discard Function  
 
 Packet Discard Function may occur due to the malfunction of the network equipment's security function, isolation function, loop prevention function, or following Malfunction of Packet Discard Function:
 
