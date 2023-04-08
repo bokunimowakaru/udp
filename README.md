@@ -1,4 +1,4 @@
-# udp: Sensor Data Transmission Format named "UDPxCSV" (UDP Cross CSV)
+# udp: Sensor Data Transmission Format named "CSVxUDP" (CSV Cross UDP)
 
 UDP Beacon (advertising) Transmitter and Receiver Examples for IoT Sensor Application.  
 
@@ -9,9 +9,9 @@ Select language to transrate this page:
 * [Japanese(日本語)](https://translate.google.com/website?sl=en&tl=ja&hl&u=https://git.bokunimo.com/udp/)
 * [English(英語)](https://git.bokunimo.com/udp/)
 
-## About "UDPxCSV" (UDP Cross CSV)
+## About "CSVxUDP" (CSV Cross UDP)
 
-UDPxCSV is a simple transmission format for sensor systems which I authored for "トランジスタ技術 2016年 9月号 CQ出版社".  
+CSVxUDP is a simple transmission format for sensor systems which I authored for "トランジスタ技術 2016年 9月号 CQ出版社".  
 It is structed by the following format defined 5 bytes device name; 1 byte separator '_', 1 byte identification number, 1 byte comma for the separated code, CSV payload, and LF code.  
 
 Fig. Sensor Data Transmission Format (bytes):  
@@ -26,15 +26,15 @@ Fig. Sensor Data Transmission Format (bytes):
 
 ## Contents in this Repository
 
-Python code examples of "UDPxCSV" (UDP Cross CSV) for Raspberry Pi:  
+Python code examples of "CSVxUDP" (CSV Cross UDP) for Raspberry Pi:  
 
 * learning: Contents for Raspberry Pi  
-* udp_monitor: Monitoring Sensor Application example for "UDPxCSV"  
-* udp_logger.py: Testing Tool for "UDPxCSV"  
+* udp_monitor: Monitoring Sensor Application example for "CSVxUDP"  
+* udp_logger.py: Testing Tool for "CSVxUDP"  
 
 ### Learning Contents for Raspberry Pi
 
-There are example codes for learning "UDPxCSV" written in Python:  
+There are example codes for learning "CSVxUDP" written in Python:  
 [https://github.com/bokunimowakaru/udp/tree/master/learning](https://github.com/bokunimowakaru/udp/tree/master/learning)
 
 ### Monitoring Sensor Application example
@@ -56,7 +56,7 @@ There are some simple monitoring tools in the root directory of this repository 
 
 [https://github.com/bokunimowakaru/udp/](https://github.com/bokunimowakaru/udp/)
 
-## Sensor Transmitters for UDPxCSV
+## Sensor Transmitters for CSVxUDP
 
 The above picture shows Humidity Sensor which structed by Rasberry Pi, M5 ENV II or III sensor,
 and Python code [ex3_tx_humi.py](https://github.com/bokunimowakaru/udp/blob/master/learning/ex3_tx_humi.py) in learning direcrory.  
@@ -70,7 +70,7 @@ and the power is supplied 3 x AA alkaline batteries for it.
 
 ### Links in English (Google Transrater)
 
-Web sites about UDPxCSV sensors:
+Web sites about CSVxUDP sensors:
 * [ボクにもわかる IoTモジュール ESP-WROOM-02 ESP32-WROOM-32](https://translate.google.com/website?sl=ja&tl=en&hl&u=https://git.bokunimo.com/esp/)
 * [IoT Sensor Core for Ambient](https://translate.google.com/website?sl=ja&tl=en&hl&u=https://bokunimo.net/ambient/)
 
@@ -86,7 +86,7 @@ Books written in Japanese:
 
 ## Troubleshooting
 
-### Trouble of Recieving UDPxCSV
+### Trouble of Recieving CSVxUDP
 
 If you cannot receive UDP, please check the following possible causes.
 
