@@ -102,7 +102,7 @@ Please check the network cables or Wi-Fi settings of the SSID and the password.
 
 #### IP Address Setting Error  
 
-Plase check the DHCP server function on the router is enabled.  
+Please check the DHCP server function is enabled on your router.  
 
 #### AP Isolation Function  
 
