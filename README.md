@@ -40,7 +40,7 @@ There are example codes for learning "CSVxUDP" written in Python:
 ### Monitoring Sensor Application example
 
 I developed a monitoring tool which displays sensor values and their bar graphs on a web browser.  
-The figure below shows recieved results from 32 sensor devices in my home.  
+The figure below shows received results from 32 sensor devices in my home.  
 
 ![udp_monitor](https://bokunimo.net/blog/wp-content/uploads/2022/02/udp-768x406.jpg)
 
