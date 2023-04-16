@@ -4,7 +4,7 @@ UDP Beacon (advertising) Transmitter and Receiver Examples for IoT Sensor Applic
 
 ## Language
 
-Select language to transrate this page:
+Select language to translate this page:
 
 * [Japanese(日本語)](https://translate.google.com/website?sl=en&tl=ja&hl&u=https://git.bokunimo.com/udp/)
 * [English(英語)](https://git.bokunimo.com/udp/)
@@ -59,7 +59,7 @@ There are some simple monitoring tools in the root directory of this repository 
 ## Sensor Transmitters for CSVxUDP
 
 The above picture shows Humidity Sensor which structed by Rasberry Pi, M5 ENV II or III sensor,
-and Python code [ex3_tx_humi.py](https://github.com/bokunimowakaru/udp/blob/master/learning/ex3_tx_humi.py) in learning direcrory.  
+and Python code [ex3_tx_humi.py](https://github.com/bokunimowakaru/udp/blob/master/learning/ex3_tx_humi.py) in learning directory.  
 
 ![Humidity Sensor for Raspberry Pi](https://raw.githubusercontent.com/bokunimowakaru/udp/master/learning/humid_sesnor.jpg)
 
@@ -68,7 +68,7 @@ and the power is supplied 3 x AA alkaline batteries for it.
 
 ![Humidity Sensor](https://bokunimo.net/blog/wp-content/uploads/yahoo/blog_import_5c796d4c214c7.jpg)
 
-### Links in English (Google Transrater)
+### Links in English (Google Translater)
 
 Web sites about CSVxUDP sensors:
 * [ボクにもわかる IoTモジュール ESP-WROOM-02 ESP32-WROOM-32](https://translate.google.com/website?sl=ja&tl=en&hl&u=https://git.bokunimo.com/esp/)
@@ -86,7 +86,7 @@ Books written in Japanese:
 
 ## Troubleshooting
 
-### Problems Recieving CSVxUDP Packets
+### Problems Receiving CSVxUDP Packets
 
 If you cannot receive UDP Packets, please check the following possible causes.
 
@@ -107,7 +107,7 @@ Please check the DHCP server function is enabled on your router.
 #### AP Isolation Function  
 
 If the devices are on your Wi-Fi LAN which structed by the router with the AP Isolation function, the pachet might not reach via the router. Please turn off the function, if the Wi-Fi LAN is not shared with other users.  
-Note: AP Isolation Function separates the paccet transportation between the terminal devices in the router, but it pass the devices to WAN via the router.  
+Note: AP Isolation Function separates the paccet transportation between the terminal devices in the router, but it passes the devices to WAN via the router.  
 
 #### Broadcasting Problems
 
@@ -117,10 +117,10 @@ Also some Wi-Fi routers discard broadcasted packets between the tarminals. In th
 
 Packet Discard Function may occur due to the malfunction of the network equipment's security function, isolation function, loop prevention function, or following Malfunction of Packet Discard Function:
 
-As the unidirectional UDP communication, a bridge function of network equipments may mistakenly recognize it, as an unnecessary packet and discard it.  
+As the unidirectional UDP communication, a bridge function of network equipment may mistakenly recognize it, as an unnecessary packet and discard it.  
 In this case, it can be repaired by repeated works of two-way communication, using Ping is one of the solutions. So, please input Ping command like "ping 192.168.1.XX⏎" on the LXTerminal.
 Or reboot your gateway, wireless access point, or switching hub. If you restart only a device that does not include a DHCP server, you need to run two-way communication such as ping after restarting.  
-After repaired, if it continues only one-way communication continues, the bridge function will discard packets again. It needs some apps usinig two-way communication on a regular basis.  
+After repaired, if it continues only one-way communication continues, the bridge function will discard packets again. It needs some apps using two-way communication on a regular basis.  
 
 ## (Misc.) ICMP Ping
 
