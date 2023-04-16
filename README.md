@@ -133,7 +133,7 @@ This repository also contains some ICMP Ping examples for leaning the protocol a
 These files are needed the super user privileges.  So, please add a "sudo" command to the beginning of these files to run.  
 
 	pi@raspberry:~/udp $ sudo ./icmp_ping.py  
-	ICMP Ping Sender Reciever  
+	ICMP Ping Sender Receiver  
 	Usage: sudo ./icmp_ping.py [ip_address] [data...]  
 	send Ping to 127.0.0.1  
 	ICMP TX(08) : 08 00 93 c0 e5 b9 7e 85  
