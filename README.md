@@ -46,7 +46,7 @@ The figure below shows received results from 32 sensor devices in my home.
 
 [https://github.com/bokunimowakaru/udp/tree/master/udp_monitor](https://github.com/bokunimowakaru/udp/tree/master/udp_monitor)
 
-### udp_logger.py
+### udp_logger.py for CSVxUDP
 
 There are some simple monitoring tools in the root directory of this repository "udp":  
 
