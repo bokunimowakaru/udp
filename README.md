@@ -12,7 +12,7 @@ Select language to translate this page:
 ## About "CSVxUDP" (CSV Cross UDP)
 
 CSVxUDP is a simple transmission format for sensor systems which I authored for "トランジスタ技術 2016年 9月号 CQ出版社".  
-It is structed by the following format defined 5 bytes device name; 1 byte separator '_', 1 byte identification number, 1 byte comma for the separated code, CSV payload, and LF code.  
+It is structed by the following format defined 5 bytes device name, 1 byte separator '_', 1 byte identification number, 1 byte comma for the separated code, CSV payload, and LF code.  
 
 Fig. Sensor Data Transmission Format (bytes):  
 
