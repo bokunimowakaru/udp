@@ -7,13 +7,13 @@
 ###############################################################################
 
 # UDPをブロードキャストで送信します。
-# echo "Ping" | ./udp_sender.py
+# echo "Ping" | ./udp_sender_uni.py
 
 # 整数の第1引数を入力した場合は、ポート番号と判定します。
-# echo "Ping" | ./udp_sender.py 1024
+# echo "Ping" | ./udp_sender_uni.py 1024
 
 # 文字列の第1引数を入力した場合は、IPアドレスと判定します。
-# echo "Ping" | ./udp_sender.py 192.168.1.10 1024
+# echo "Ping" | ./udp_sender_uni.py 192.168.1.10 1024
 
 import sys
 import socket
