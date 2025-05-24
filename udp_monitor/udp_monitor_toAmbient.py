@@ -65,7 +65,7 @@ csvs = {\
     'envir':[('Temperature','deg C'),('Humidity','%'),('Pressure','hPa')],\
     'e_co2':[('Temperature','deg C'),('Humidity','%'),('Pressure','hPa'),('CO2','ppm'),('TVOC','ppb'),('Counter','')],\
     'janke':[('Janken',''),('Fingers','')],\
-    'cpu_m':[('CPU Load','%'),('Memory','%')],\
+    'cpu_m':[('CPU Load','%'),('Memory','%'),('Disk','%')],\
     #'accem':[('Accelerometer X','g'),('Accelerometer Y','g'),('Accelerometer Z','g')],\
     'accem':[('Accelerometer X','m/s2'),('Accelerometer Y','m/s2'),('Accelerometer Z','m/s2')],\
     'actap':[('Power','W'),('Cumulative','Wh'),('Time','Seconds')],\
