@@ -3,7 +3,7 @@
 # UDPを受信し、保存する
 # 各種IoTセンサ用・測定結果表示プログラム【保存機能つき】【デバイス限定式】
 #
-# Copyright (c) 2018-2021 Wataru KUNINO
+# Copyright (c) 2018-2025 Wataru KUNINO
 
 # 初期設定
 UDP_PORT = 1024             # UDP待ち受けポート番号(デフォルトは1024)
