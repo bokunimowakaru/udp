@@ -3,7 +3,7 @@
 # UDPを受信し、保存する
 # 各種IoTセンサ用・測定結果表示プログラム【保存機能つき】【デバイス限定式】
 #
-# Copyright (c) 2018-2021 Wataru KUNINO
+# Copyright (c) 2018-2025 Wataru KUNINO
 
 # 初期設定
 UDP_PORT = 1024             # UDP待ち受けポート番号(デフォルトは1024)
@@ -13,7 +13,7 @@ DEV_CHECK = False           # 未登録デバイス保存(True:破棄,False:UNKN
 sensors = [\
     'temp0','hall0','adcnv','btn_s','pir_s','illum',\
     'temp.','humid','press','envir','accem','rd_sw',\
-    'press','e_co2',\
+    'press','e_co2','janke','cpu_m',\
     'actap','awsin','count','esp32','ident','medal',\
     'meter','ocean','river','tftpc','timer','voice',\
     'xb_ac','xb_ct','xb_ev','xb_sw','xbbat','xbbel',\
@@ -23,7 +23,9 @@ sensors = [\
 
 # センサ機器用CSV形式データの項目（数値データ）
 csvs = {\
+    'btn_s':[('Ringing','')],\
     'pir_s':[('Wake up Switch',''),('PIR Switch','')],\
+    'illum':[('Illuminance','lx')],\
     'rd_sw':[('Wake up Switch',''),('Reed Switch','')],\
     'temp0':[('Temperature','deg C')],\
     'temp.':[('Temperature','deg C')],\
@@ -32,8 +34,12 @@ csvs = {\
     'press':[('Temperature','deg C'),('Pressure','hPa')],\
     'envir':[('Temperature','deg C'),('Humidity','%'),('Pressure','hPa')],\
     'e_co2':[('Temperature','deg C'),('Humidity','%'),('Pressure','hPa'),('CO2','ppm'),('TVOC','ppb'),('Counter','')],\
-    'accem':[('Accelerometer X','g'),('Accelerometer Y','g'),('Accelerometer Z','g')],\
+    'janke':[('Janken',''),('Fingers','')],\
+    'cpu_m':[('CPU Load','%'),('Memory','%'),('Disk','%')],\
+    #'accem':[('Accelerometer X','g'),('Accelerometer Y','g'),('Accelerometer Z','g')],\
+    'accem':[('Accelerometer X','m/s2'),('Accelerometer Y','m/s2'),('Accelerometer Z','m/s2')],\
     'actap':[('Power','W'),('Cumulative','Wh'),('Time','Seconds')],\
+    'count':[('Counter','')],\
     'meter':[('Power','W'),('Cumulative','Wh'),('Time','Seconds')],\
     'awsin':[('Participants',''),('Cumulative','')],\
     'xb_ac':[('Usage Time','h'),('Consumption','kWh'),('Prev. Usage Time','h'),('Consumption','kWh')],\

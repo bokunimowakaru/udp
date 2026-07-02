@@ -7,9 +7,9 @@
 # また、指定した一部のデータをAmbientへ転送します。
 #
 # 最新版：
-# https://bokunimo.net/git/udp/blob/master/udp_monitor/udp_monitor_chart.py
+# https://bokunimo.net/git/udp/blob/master/udp_monitor/udp_monitor_toAmbient.py
 #
-#                                          Copyright (c) 2021-2022 Wataru KUNINO
+#                                          Copyright (c) 2021-2025 Wataru KUNINO
 ################################################################################
 
 # 初期設定
@@ -43,7 +43,7 @@ OFFSET_VALUE = {\
 sensors = [\
     'temp0','hall0','adcnv','btn_s','pir_s','illum',\
     'temp.','humid','press','envir','accem','rd_sw',\
-    'press','e_co2','janke',\
+    'press','e_co2','janke','cpu_m',\
     'actap','awsin','count','esp32','ident','medal',\
     'meter','ocean','river','tftpc','timer','voice',\
     'xb_ac','xb_ct','xb_ev','xb_sw','xbbat','xbbel',\
@@ -65,6 +65,7 @@ csvs = {\
     'envir':[('Temperature','deg C'),('Humidity','%'),('Pressure','hPa')],\
     'e_co2':[('Temperature','deg C'),('Humidity','%'),('Pressure','hPa'),('CO2','ppm'),('TVOC','ppb'),('Counter','')],\
     'janke':[('Janken',''),('Fingers','')],\
+    'cpu_m':[('CPU Load','%'),('Memory','%'),('Disk','%')],\
     #'accem':[('Accelerometer X','g'),('Accelerometer Y','g'),('Accelerometer Z','g')],\
     'accem':[('Accelerometer X','m/s2'),('Accelerometer Y','m/s2'),('Accelerometer Z','m/s2')],\
     'actap':[('Power','W'),('Cumulative','Wh'),('Time','Seconds')],\
@@ -100,6 +101,8 @@ csvs_range = {\
     ('TVOC','ppb'):             (0,5000),\
     ('Counter',''):             (0,30),\
     ('Fingers',''):             (0,5),\
+    ('CPU Load','%'):           (0,100),\
+    ('Memory','%'):             (0,100),\
     ('Accelerometer X','m/s2'): (-9.8,9.8),\
     ('Accelerometer Y','m/s2'): (-9.8,9.8),\
     ('Accelerometer Z','m/s2'): (-9.8,9.8),\
@@ -392,7 +395,7 @@ def wsgi_app(environ, start_response):              # HTTPアクセス受信時�
     if http_port != 80:
         html += ':' + str(http_port)
     html += '/?{devices|items}[&device=name][&item=name][&hist=device_name]</font></div>\n'
-    html += '<div>Copyright (c) 2021-2022 <a href="https://bokunimo.net">Wataru KUNINO</a></div>\n'
+    html += '<div>Copyright (c) 2021-2025 <a href="https://bokunimo.net">Wataru KUNINO</a></div>\n'
     html += '</tr>\n</table>\n'                     # 表の終了
     html += '</body>\n</html>\n'                    # htmlの終了
     start_response('200 OK', [('Content-type', 'text/html; charset=utf-8')])

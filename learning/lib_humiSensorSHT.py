@@ -32,7 +32,7 @@ class HumiSensor:                                       # クラスHumiSensorの
             i = self.word2uint(data[0],data[1])
             self.temp = float(i) / 65535. * 175. - 45.
             i = self.word2uint(data[3],data[4])
-            self.hum  = float(i) / 65535. * 100.
-        return (self.temp, self.hum)                    # 測定結果を応答
+            self.humi  = float(i) / 65535. * 100.
+        return (self.temp, self.humi)                   # 測定結果を応答
     def __del__(self):                                  # インスタンスの削除
         self.i2c.close()                                # ファイルを閉じる
